@@ -1,6 +1,6 @@
 import React from 'react'
 import './Navbar.css'
-export const Navbar = () => {
+export const Navbar = ({user}) => {
   return (
     <div className='navbar'>
         <img src="./logo.png" alt="logo" className='logo' />
@@ -8,7 +8,7 @@ export const Navbar = () => {
             <li>Home</li>
             <li>Services</li>
             <li>About</li>
-            <li>Profile</li>
+            <li>{user ?`${user.name}`: "welcome Guest"}</li>
         </ul>
     </div>
   )
