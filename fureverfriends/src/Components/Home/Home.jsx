@@ -2,10 +2,10 @@ import React from 'react'
 import {Navbar} from '../Navbar/Navbar'
 import Aboutus from './Aboutus'
 
-export const Home = () => {
+export const Home = ({user}) => {
   return (
     <div>
-        <Navbar/>
+        <Navbar user={user}/>
         <Aboutus/>
     </div>
   )
