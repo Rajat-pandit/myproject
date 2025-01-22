@@ -1,11 +1,12 @@
-
-import './App.css';
+import React, {useState} from "react";
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login  from './Components/LoginSignup/Login';
 import Signup from './Components/LoginSignup/Signup';
 import Home from './Components/Home/Home';
 
+
 function App() {
+ 
   return (
     <div >
       <Router>
