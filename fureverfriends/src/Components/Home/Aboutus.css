@@ -6,20 +6,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: lightgrey;
-    padding: 50px;
+    background-color: #fff8e1;
+    padding: 30px 50px;
     border-radius: 8px;
     box-shadow: 0px 6px 10px 2px rgba(0, 0, 0, 0.1);
     margin-top: 40px;
     flex-direction: row-reverse;
-    width: 85%;
+    width: 75%;
+    height: 300px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .header-image{
-    width: 400px;
-    height: 90%;
+    width: 500px;
+    height: 100%;
     border-radius: 8px;
     margin-left: auto;
 }
@@ -29,14 +30,14 @@
     margin-left: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     margin-top: 0px;
 }
 
 h2{
     font-size: 36px;
     color: black;
-    margin-bottom: 60px;
+    margin-bottom: 20px;
     text-align: left;
     padding-top: 0;
     margin-top: 0;
@@ -55,10 +56,11 @@ h2{
         flex-direction: column;
         text-align: center;
         width: 90%;
+        height: auto;
     }
 
     .header-image{
-        width: 200px;
+        width: 250px;
         height: auto;
         margin-bottom: 20px;
     }
