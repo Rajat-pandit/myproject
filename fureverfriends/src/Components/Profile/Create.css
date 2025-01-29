@@ -1,0 +1,60 @@
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    height: 600px;
+}
+
+.wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.paperStyle{
+    padding: 32px;
+    margin: 100px auto;
+    border-radius: 16px;
+    box-shadow: 10px 10px 10px rgba(0, 0,0, 0.1);
+}
+
+.create .heading{
+    font-size: 42px;
+    font-weight: 600;
+    padding: 15px;
+}
+
+.create .btnstyle{
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    background-color: blue;
+    border-radius: 8px;
+}
+
+.create .btnstyle:hover{
+    cursor: pointer;
+    background-color: darkgreen;
+}
+
+.image img{
+    width: 260px;
+    height: 250px;
+    border-radius: 50%;
+    border: 5px solid gray;
+    margin-left: 60px;
+}
+
+.image img:hover{
+    cursor: pointer;
+    background-color: gray;
+}
+
+.image p{
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 80px;
+    margin-left: 80px;
+}
+

@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login  from './Components/LoginSignup/Login';
 import Signup from './Components/LoginSignup/Signup';
 import Home from './Components/Home/Home';
-
+import Manage from "./Components/Profile/Manage";
+import Create from "./Components/Profile/Create";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
@@ -25,6 +26,9 @@ function App() {
           path="/home" 
           element={isLoggedIn ? <Home user={user} /> : <Navigate to="/login" />} 
         />
+        <Route path="/manageprofile" element= {isLoggedIn ? <Manage user={user}/> : <Navigate tp ="/login"/>}
+        />
+        <Route path="/create" element={isLoggedIn ? <Create/> : <Navigate to="/login"/>}/>
         </Routes>
       </Router>
     

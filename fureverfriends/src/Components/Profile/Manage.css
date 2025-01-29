@@ -1,0 +1,48 @@
+.navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color:#76d3cd;
+    height: 60px ;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.navbar .logo{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.manage-container{
+    margin-top: 60px;
+    display: flex;
+    flex-direction:column ;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh-60px);
+    width: 100%;
+}
+
+.add-profile-btn{
+    border-radius: 50%;
+    margin-left: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+
+.add-profile-btn h3{
+    margin-top: 10px;
+    text-align: center;
+}
