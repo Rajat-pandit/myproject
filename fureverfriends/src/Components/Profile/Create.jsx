@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react'
 import './Create.css'
 import {Grid2, Button, Paper, TextField, Typography, Alert} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const Create = () => {
     const navigate= useNavigate();
@@ -10,14 +11,40 @@ export const Create = () => {
     const [photoUploaded, setPhotoUploaded]= useState(false);
     const [error, setError]= useState('');
 
+    const [petsname, setPetsname]= useState('');
+    const [breed, setBreed]= useState('');
+    const [age, setAge]= useState('');
+    const [contactnumber, setContactnumber]= useState('');
+
     const handleCreate= async (event) => {
         event.preventDefault();
         if (!photoUploaded){
-            setError('Please upload your pet\s picture.');
+            setError('Please upload your pet\'s picture.');
             return;
         }
         setError('');
-    }
+
+        const formData = new FormData();
+        formData.append('petsname', petsname);
+        formData.append('breed', breed);
+        formData.append('age', age);
+        formData.append('contactnumber', contactnumber);
+        formData.append('photo', fileInputRef.current.files[0]);
+
+        try{
+            await axios.post("http://localhost:3001/profiles", formData, {
+                headres: {
+                    'Content-Type' : 'multipart/form-data', 
+                },
+                withCredentials: true,
+            });
+            navigate('/manageprofile');
+        } catch (err){
+            console.error('Error uploading data:', err);
+            setError('Failed to create pet profile.');
+        }
+    };
+    
     const handleImageClick = () =>{
         fileInputRef.current.click();
     };
@@ -62,10 +89,10 @@ export const Create = () => {
                 }}>
                     <Typography component="h1" variant="h5" className='heading'>Create Profile</Typography>
                     <form onSubmit={handleCreate}>
-                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='text' label="Pet's Name" placeholder= "Enter Name" name="petname" ></TextField>
-                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='text' label="Breed" variant='outlined' placeholder= "Enter Breed" name="breed" ></TextField>
-                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='number' label="Age" variant='outlined' placeholder= "Enter Age" name="age" ></TextField>
-                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='tel' label="Contact Number" variant='outlined' placeholder= "Enter Contact Number" name="number" ></TextField>
+                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='text' label="Pet's Name" placeholder= "Enter Name" name="petname" value={petsname} onChange={(e) => setPetsname(e.target.value)}></TextField>
+                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='text' label="Breed" variant='outlined' placeholder= "Enter Breed" name="breed" value={breed} onChange={(e) => setBreed(e.target.value)}></TextField>
+                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='number' label="Age" variant='outlined' placeholder= "Enter Age" name="age" value={age} onChange={(e) => setAge(e.target.value)}></TextField>
+                        <TextField className='row' required sx={{marginBottom: "20px", label:{fontWeight: '600', fontSize: '1.3rem'}}} fullWidth type='tel' label="Contact Number" variant='outlined' placeholder= "Enter Contact Number" name="number" value={contactnumber} onChange={(e) => setContactnumber(e.target.value)}></TextField>
                         <Button className='btnstyle' variant='contained' type='submit'>Create</Button>
                     </form>
                     {error && <Alert severity='error' style={{marginTop:'20px'}}>{error}</Alert>}

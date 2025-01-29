@@ -4,6 +4,9 @@ const cors= require("cors");
 const bcrypt= require("bcrypt");
 const dotenv= require("dotenv");
 const UserModel= require("./model/User");
+const multer = require("multer");
+const path = require("path");
+const ProfileModel= require("./model/Profile");
 const session= require("express-session");
 const MongoStore= require("connect-mongo");
 dotenv.config();
@@ -13,6 +16,7 @@ app.use(cors({
     origin:'http://localhost:3000',
     credentials: true
 }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -68,10 +72,63 @@ app.post("/login", async (req, res) => {
     } 
 });
 
+const storage = multer.diskStorage({
+    destination: (req, files, cb) => {
+        cb(null, "uploads/");
+    },
+    filename:(req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage});
+
+app.post("/profiles", upload.single("photo"), async(req, res) => {
+    const {petsname, breed, age, contactnumber} = req.body;
+    const imagePath= req.file ? req.file.path : null;
+    const {name, email}= req.session.user;
+    try{
+        const petProfile = new ProfileModel({
+           petsName: petsname,
+           breed: breed,
+           age: age,
+           contactNumber: contactnumber,
+           image: imagePath,
+           ownerName:name,
+           ownerEmail: email 
+        });
+
+        await petProfile.save();
+        res.status(201).send("Pet profile created successfully!");
+    } catch (err){
+        console.error("Error saving pet profile:", err);
+        res.status(500).send(`Failed to create pet profile. Error: ${err.message}`);
+    }
+});
+
 app.get('/user', (req, res) => {
     if(req.session.user){
         res.json({user: req.session.user});
     } else{
         res.status(401).json("Not authenticated");
+    }
+});
+
+app.get('/api/profiles', (req, res) => {
+    if(req.session.user) {
+        ProfileModel.find({ownerEmail: req.session.user.email})
+            .then(profiles => {
+                if (profiles.length > 0){
+                    res.json(profiles);
+                } else {
+                    res.status(404).send('No profiles found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching profiles:', error);
+                res.status(500).send('Internal server error');
+            });
+    } else{
+        res.status(401).json('Not authenticated');
     }
 });

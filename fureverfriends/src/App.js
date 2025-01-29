@@ -26,7 +26,7 @@ function App() {
           path="/home" 
           element={isLoggedIn ? <Home user={user} /> : <Navigate to="/login" />} 
         />
-        <Route path="/manageprofile" element= {isLoggedIn ? <Manage user={user}/> : <Navigate tp ="/login"/>}
+        <Route path="/manageprofile" element= {isLoggedIn ? <Manage user={user}/> : <Navigate to ="/login"/>}
         />
         <Route path="/create" element={isLoggedIn ? <Create/> : <Navigate to="/login"/>}/>
         </Routes>
