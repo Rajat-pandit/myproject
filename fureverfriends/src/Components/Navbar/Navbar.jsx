@@ -43,9 +43,9 @@ export const Navbar = ({user}) => {
 
   return (
     <div className='navbar'>
-        <img src="./logo.png" alt="logo" className='logo' />
+        <img src="/logo.png" alt="logo" className='logo' />
         <ul className="navbar-menu">
-            <li>Home</li>
+            <li onClick={()=> navigate("/home")}>Home</li>
             <li className='dropdown' onClick={toggleServicesDropdown} ref={serviceDropdownRef}>
               Services <span className={serviceDropdownOpen ? 'arrow-up' : 'arrow-down'}> ▼</span>
               {serviceDropdownOpen && (
