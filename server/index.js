@@ -132,3 +132,24 @@ app.get('/api/profiles', (req, res) => {
         res.status(401).json('Not authenticated');
     }
 });
+
+app.get('/api/profiles/:petId', (req, res) => {
+    const petId = req.params.petId;
+
+    if(req.session.user) {
+        ProfileModel.findById(petId)
+            .then(profile => {
+                if(profile){
+                    res.json(profile);
+                } else{
+                    res.status(404).send('Pet not found');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching pet data:', error);
+                res.status(500).send('Internal server error');
+            });
+    } else{
+        res.status(401).json('Not authenticated');
+    }
+});

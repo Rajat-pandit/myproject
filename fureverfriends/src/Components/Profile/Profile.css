@@ -1,0 +1,96 @@
+.navbar{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #76d3cd;
+    height: 60px;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.navbar .logo{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+.pet-details{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 100px 20px;
+    margin-top: 20px;
+}
+
+.pet-details .left-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+    margin-left: -20px;
+    margin-bottom: 40px;
+}
+
+.pet-details h1{
+    font-size: 2.5rem;
+    margin: 20px 0 0;
+    color: #333;
+}
+
+.pet-details img{
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin-top: 10px;
+}
+
+.pet-details .right-section{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    border-left: 2px solid #e0e0e0;
+}
+
+.pet-details .right-section p{
+    font-size: 20px;
+    margin: 10px 0;
+    color: #333;
+    font-weight: 500;
+}
+
+.pet-details .right-section p.label{
+    font-weight: bold;
+    color: #333;
+}
+
+.left-section .options{
+    margin-top: 40px;
+    padding-left: 0;
+}
+
+.left-section .options ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.left-section .options li{
+    margin-top: 10px;
+    margin-bottom: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
+    font-weight: 500;
+}
+
+.left-section .options li:hover{
+    color: whitesmoke;
+}
+
