@@ -6,6 +6,8 @@ import Home from './Components/Home/Home';
 import Manage from "./Components/Profile/Manage";
 import Create from "./Components/Profile/Create";
 import PetDetails from "./Components/Profile/PetDetails";
+import Adoption from "./Components/Services/Adoption";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
   const [user, setUser]= useState(null);
@@ -30,7 +32,7 @@ function App() {
         />
         <Route path="/create" element={isLoggedIn ? <Create/> : <Navigate to="/login"/>}/>
         <Route path="/pet/:petId" element={isLoggedIn ? <PetDetails user={user}/> :<Navigate to="/login"/>} />
-
+        <Route path= "/adoption" element={isLoggedIn ? <Adoption user={user}/> : <Navigate to= "/login"/>}></Route>
         </Routes>
       </Router>
     
