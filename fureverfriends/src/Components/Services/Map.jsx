@@ -8,7 +8,7 @@ const Map = () => {
         document.head.appendChild(script);
         script.onload= () => {
             window.initMap= () => {
-                const map= new window.SVGFEMorphologyElement.maps.Map(document.getElementById('map'), {
+                const map= new window.google.maps.Map(document.getElementById('map'), {
                     center: {lat: 27.7172, lng: 85.3240},
                     zoom: 13,
                 });
