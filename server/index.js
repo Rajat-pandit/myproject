@@ -153,3 +153,40 @@ app.get('/api/profiles/:petId', (req, res) => {
         res.status(401).json('Not authenticated');
     }
 });
+
+app.put('/api/profiles/:petId', upload.single('image'), (req, res)=> {
+    const petId= req.params.petId;
+    const{petsName, ownerName, ownerEmail, age, breed,  contactNumber}= req.body;
+    const imageUrl= req.file ? req.file.path: null;
+    if(!petsName || !ownerName || !ownerEmail || !age || !breed || ! contactNumber){
+        return res.status(400).json({error: 'All fields are required.'});
+
+    }
+    if(!mongoose.Types.ObjectId.isValid(petId)){
+        return res.status(400).json({error: 'Invalid pet Id format'});
+    }
+
+    const updateData={
+        petsName,
+        ownerName,
+        ownerEmail,
+        age,
+        breed,
+        contactNumber,
+    };
+    if(imageUrl){
+        updateData.image= imageUrl;
+    }
+    ProfileModel.findByIdAndUpdate(petId, updateData, {new:true})
+    .then(updatedProfile=>{
+        if(updatedProfile){
+            res.json(updatedProfile)
+        } else{
+            res.status(404).json({error:'Pet profile not found'});
+        }
+    })
+    .catch(error =>{
+        console.error('Error updating profile:', error);
+        res.status(500).json({error:'Internal server error', details: error.message});
+    });
+});

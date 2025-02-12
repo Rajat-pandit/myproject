@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
+import EditProfile from './EditProfile';
 import {CircularProgress, Box} from '@mui/material';
 import './Profile.css';
 
 const PetDetails = ({user}) => {
     const {petId} = useParams();
     const [petData, setPetData]= useState(null);
+    const [isEditMode, setIsEditMode]= useState(false);
 
     useEffect(() =>{
         axios.get(`http://localhost:3001/api/profiles/${petId}`, {withCredentials: true})
@@ -18,6 +20,15 @@ const PetDetails = ({user}) => {
                 console.error('Error fetching pet data:', error);
             });
     }, [petId]);
+
+    const handleEditClick= ()=>{
+        setIsEditMode(true);
+    }
+
+    const handleSaveChanges =(updatedPetData)=>{
+        setPetData(updatedPetData);
+        setIsEditMode(false);
+    }
 
     if (!petData){
         return(
@@ -39,17 +50,23 @@ const PetDetails = ({user}) => {
                 <ul>
                     <li>Medical Records</li>
                     <li>Reminders</li>
-                    <li>Edit Profile</li>
+                    <li onClick={handleEditClick}>Edit Profile</li>
                 </ul>
             </div>
         </div>
 
         <div className="right-section">
-            <p>Owner's Name: {petData.ownerName}</p>
-            <p>Email: {petData.ownerEmail}</p>
-            <p>Age: {petData.age}</p>
-            <p>Breed: {petData.breed}</p>
-            <p>Contact Number: {petData.contactNumber}</p>
+             {isEditMode ? (
+                <EditProfile petData={petData} onSaveChanges={handleSaveChanges}></EditProfile>
+            ) : (
+                <>
+                            <p>Owner's Name: {petData.ownerName}</p>
+                            <p>Email: {petData.ownerEmail}</p>
+                            <p>Age: {petData.age}</p>
+                            <p>Breed: {petData.breed}</p>
+                            <p>Contact Number: {petData.contactNumber}</p>
+                        </>
+            )}
         </div>
     </div>
 
