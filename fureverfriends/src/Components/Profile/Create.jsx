@@ -52,7 +52,7 @@ export const Create = () => {
     const handleFileChange= (event)=> {
         const file= event.target.files[0];
         if (file){
-            const validTypes= ['image/jpeg', 'image.png'];
+            const validTypes= ['image/jpeg', 'image/png'];
             if (!validTypes.includes(file.type)){
                 setError('Please upload a valid image (JPG, PNG');
                 setPhotoUploaded(false);
