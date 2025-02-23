@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
 import EditProfile from './EditProfile';
+import Medical from './Medical';
 import {CircularProgress, Box} from '@mui/material';
 import './Profile.css';
 
@@ -10,6 +11,7 @@ const PetDetails = ({user}) => {
     const {petId} = useParams();
     const [petData, setPetData]= useState(null);
     const [isEditMode, setIsEditMode]= useState(false);
+    const [isMedicalMode, setIsMedicalMode]= useState(false);
 
     useEffect(() =>{
         axios.get(`http://localhost:3001/api/profiles/${petId}`, {withCredentials: true})
@@ -23,6 +25,10 @@ const PetDetails = ({user}) => {
 
     const handleEditClick= ()=>{
         setIsEditMode(true);
+    }
+
+    const handleMedicalClick= () =>{
+        setIsMedicalMode(true);
     }
 
     const handleSaveChanges =(updatedPetData)=>{
@@ -48,7 +54,7 @@ const PetDetails = ({user}) => {
 
             <div className="options">
                 <ul>
-                    <li>Medical Records</li>
+                    <li onClick={handleMedicalClick}>Medical Records</li>
                     <li>Reminders</li>
                     <li onClick={handleEditClick}>Edit Profile</li>
                 </ul>
@@ -56,7 +62,9 @@ const PetDetails = ({user}) => {
         </div>
 
         <div className="right-section">
-             {isEditMode ? (
+             {isMedicalMode ? (
+                <Medical petId={petId}/>):
+                isEditMode ? (
                 <EditProfile petData={petData} onSaveChanges={handleSaveChanges}></EditProfile>
             ) : (
                 <>

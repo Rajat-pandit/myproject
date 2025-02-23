@@ -7,8 +7,10 @@ const UserModel= require("./model/User");
 const multer = require("multer");
 const path = require("path");
 const ProfileModel= require("./model/Profile");
+const MedicalRecord= require("./model/MedicalRecord");
 const session= require("express-session");
 const MongoStore= require("connect-mongo");
+const {ObjectId}= require('mongodb');
 dotenv.config();
 const app= express();
 app.use(express.json());
@@ -189,4 +191,58 @@ app.put('/api/profiles/:petId', upload.single('image'), (req, res)=> {
         console.error('Error updating profile:', error);
         res.status(500).json({error:'Internal server error', details: error.message});
     });
+});
+
+app.post('/api/medical-records', async (req, res) => {
+    try{
+        const {date, vetName, description, diagnosis, treatment, medications,notes, nextVisit, petId}= req.body;
+        const newMedicalRecord= new MedicalRecord({
+            date,
+            vetName,
+            description,
+            diagnosis,
+            treatment,
+            medications,
+            notes,
+            nextVisit,
+            petId,
+        });
+
+        await newMedicalRecord.save();
+        res.status(201).json(newMedicalRecord);
+    } catch (error){
+        res.status(500).json({message:'Error creating medical record', error: error.message});
+    }
+});
+
+app.get('/api/medical-records/:petId', async(req,res) => {
+    const {petId}= req.params;
+
+    if(!ObjectId.isValid(petId)){
+        return res.status(400).json({message: 'Invalid petId'});
+    }
+
+    try{
+        const medicalRecords= await MedicalRecord.find({petId: new ObjectId(petId)});
+        if(medicalRecords.length ===0){
+            return res.status(404).json({message: 'No medical records found for this pet'});
+        }
+        res.status(200).json(medicalRecords);
+    } catch (error){
+        console.error('Error fetching medical records:', error);
+        res.status(500).json({message:'Error fetching medical records', error: error.message});
+    }
+});
+
+app.delete('/api/medical-records/:id', async(req, res) => {
+    const recordId= req.params.id;
+    try{
+        const result= await MedicalRecord.findByIdAndDelete(recordId);
+        if( !result){
+            return res.status(404).json({error: 'Record not found'});
+        }
+        return res.status(200).json({message:'Record deleted successfully'});
+    } catch (err){
+        return res.status(500).json({error:'Error deleting record', details: err.message});
+    }
 });

@@ -1,96 +1,111 @@
-.navbar{
-    position:fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #76d3cd;
-    height: 60px;
-    padding: 0 20px;
-    z-index: 1000;
-}
-
-.navbar .logo{
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
 .pet-details{
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 100px 20px;
-    margin-top: 20px;
+    padding: 120px 20px;
+    gap: 20px;
 }
 
-.pet-details .left-section{
+.left-section, .right-section{
+    border-radius: 8px;
+}
+
+.left-section{
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 25%;
-    margin-left: -20px;
-    margin-bottom: 40px;
+    width: 30%;
+    background-color: #76d3cd;
+    padding: 20px;
 }
 
-.pet-details h1{
-    font-size: 2.5rem;
-    margin: 20px 0 0;
-    color: #333;
-}
-
-.pet-details img{
-    border-radius: 50%;
+.left-section img{
     width: 200px;
     height: 200px;
+    border-radius: 50%;
     object-fit: cover;
-    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-.pet-details .right-section{
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px;
-    border-left: 2px solid #e0e0e0;
-}
-
-.pet-details .right-section p{
-    font-size: 20px;
-    margin: 10px 0;
+.left-section h1{
+    font-size: 2.5rem;
     color: #333;
-    font-weight: 500;
-}
-
-.pet-details .right-section p.label{
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 20px;
 }
 
 .left-section .options{
-    margin-top: 40px;
-    padding-left: 0;
+    width: 100%;
 }
 
 .left-section .options ul{
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0
 }
 
 .left-section .options li{
-    margin-top: 10px;
-    margin-bottom: 30px;
     font-size: 18px;
+    margin-bottom: 15px;
     cursor: pointer;
     color: #333;
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .left-section .options li:hover{
-    color: whitesmoke;
+    color: #fff;
 }
 
+.right-section{
+    width: 65%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 2px solid #e0e0e0;
+}
+
+.right-section p{
+    font-size: 20px;
+    margin: 10px 0;
+    color: #555;
+    font-weight: 500;
+}
+
+.right-section p.label{
+    font-weight: bold;
+    color: #333;
+}
+
+.MuiCircularProgress-root{
+    color: #76d3cd;
+}
+
+@media (max-width:760px) {
+    .pet-details{
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .left-section, .right-section{
+        width: 100%;
+        margin: 0;
+    }
+
+    .left-section img{
+        width: 150px;
+        height: 150px;
+    }
+
+    .left-section h1{
+        font-size: 2rem;
+    }
+    
+    .right-section p{
+        font-size: 16px;
+    }
+
+    .left-section .options li{
+        font-size: 16px;
+    }
+    
+}

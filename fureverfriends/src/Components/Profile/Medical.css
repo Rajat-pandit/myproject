@@ -1,0 +1,98 @@
+.medical-container{
+    margin-top: 0px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.medical-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.medical-container button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    background-color: #1d88a8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.medical-container button:hover{
+    background-color: #60b6ab;
+}
+
+.medical-form{
+    margin-top: 30px;
+    padding: 25px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.medical-form .MuiTextField-root{
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.medical-form button{
+    margin-right: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color: #1d88a8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.medical-form button:hover {
+        background-color: #60b6ab;
+}
+
+.medical-form button:last-child{
+    background-color: #f44336;
+}
+
+.medical-form button:last-child:hover{
+    background-color: #d32f2f;
+}
+
+.MuiTextField-root{
+    margin-top: 20px;
+}
+
+.MuiCircularProgress-root{
+    display: block;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.medical-record button{
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: background-color 0.3 ease;
+}
+
+.medical-record button:hover{
+    background-color: #d32f2f;
+}
