@@ -14,8 +14,16 @@ const {ObjectId}= require('mongodb');
 dotenv.config();
 const app= express();
 app.use(express.json());
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3002'];
+
 app.use(cors({
-    origin:'http://localhost:3000',
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -246,3 +254,4 @@ app.delete('/api/medical-records/:id', async(req, res) => {
         return res.status(500).json({error:'Error deleting record', details: err.message});
     }
 });
+
