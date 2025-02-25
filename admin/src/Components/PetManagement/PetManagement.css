@@ -1,0 +1,133 @@
+.pet-management{
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.pet-management h1{
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.add-new-pet-btn{
+    background-color: #6fbfb9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.add-new-pet-btn:hover{
+    background-color: #5ea29a;
+}
+
+.error-message{
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content{
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+}
+
+.close{
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-content h3{
+    margin-top: 0;
+}
+
+.animal-cards-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.animal-card{
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.animal-card:hover{
+    transform: translate(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.animal-image img{
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.animal-card h3{
+    color: #333;
+    margin: 10px;
+}
+
+.animal-card p{
+    color: #777;
+    margin: 5px 0;
+}
+
+.edit-btn, .delete-btn{
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: 14px;
+}
+
+.edit-btn{
+    background-color: #6fbfb9;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover{
+    background-color: #5ea29a;
+}
+
+.delete-btn{
+    background-color:#e74c3c ;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover{
+    background-color: #c0392b;
+}
