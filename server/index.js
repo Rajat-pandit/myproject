@@ -14,6 +14,8 @@ const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
 dotenv.config();
 const app= express();
+const server = require('http').Server(app);
+
 app.use(express.json());
 const allowedOrigins = ['http://localhost:3000', 'http://localhost:3002'];
 
@@ -258,11 +260,11 @@ app.delete('/api/medical-records/:id', async(req, res) => {
 
 app.post('/api/pets', upload.single('petImage'), async (req, res) => {
     try{
-        const {PetName, breed, age}= req.body;
-        const petImage= req.file? req.file.patch: null;
+        const {petName, breed, age}= req.body;
+        const petImage= req.file ? req.file.path: null;
 
         const newPet= new PetModel({
-            PetName,
+            petName,
             breed,
             age,
             image: petImage
@@ -275,7 +277,7 @@ app.post('/api/pets', upload.single('petImage'), async (req, res) => {
     }
 });
 
-app.put('/api/pets/:petId', upload.single('PetImage'), (req,res) =>{
+app.put('/api/pets/:petId', upload.single('petImage'), (req,res) =>{
     const petId= req.params.petId;
     const {petName, breed,age}= req.body;
     const petImage= req.file? req.file.path: null;
@@ -306,4 +308,37 @@ app.put('/api/pets/:petId', upload.single('PetImage'), (req,res) =>{
             console.error('Error updating pet:', error);
             res.status(500).json({error: 'Internal server error'});
         });
+});
+
+app.get('/api/pets', async(req, res)=>{
+    try{
+        const pets= await PetModel.find();
+        if(!pets || pets.length===0){
+            return res.status(404).json({message:'No pets found'});
+        }
+
+        const petsWithImageURLs= pets.map(pet => ({
+            ...pet.toObject(),
+        }));
+
+        res.status(200).json(petsWithImageURLs);
+    } catch(error){
+        res.status(500).json({messgae:'Error fetching pets', error});
+    }
+});
+
+app.delete('/api/pets/:id', async(req, res) => {
+    try{
+        const petId= req.params.id;
+        const deletedPet= await PetModel.findByIdAndDelete(petId);
+
+        if(!deletedPet) {
+            return res.status(404).json({message:'Pet not found'});
+        }
+
+        res.status(200).json({message:'Pet deleted successfully'});
+    } catch (error){
+        console.error('Error deleting pet:', error);
+        res.status(500).json({message:'Server error'});
+    }
 });

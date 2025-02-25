@@ -16,7 +16,7 @@ export const Form= ({pet, closeModal, onPetSubmit}) =>{
     const handleImageChange= (e)=> {
         const file= e.target.files[0];
         if(file){
-            if(file.type.startrswith('image/')){
+            if(file.type.startsWith('image/')){
                 setPetData((prevData) => ({
                     ...prevData,
                     petImage:file,
@@ -58,7 +58,7 @@ export const Form= ({pet, closeModal, onPetSubmit}) =>{
 
             let response;
             if(pet){
-                reponse= await axios.put(`http://localhost:3001/api/pets/${pet._id}`, formData, {headers:{
+                response= await axios.put(`http://localhost:3001/api/pets/${pet._id}`, formData, {headers:{
                     'Content-Type': 'multipart/form-data',
                 }, withCredentials:true,
             });
@@ -83,7 +83,7 @@ export const Form= ({pet, closeModal, onPetSubmit}) =>{
         <h1>{pet ? 'Edit Pet' : 'Add New Pet'}</h1>
         <form onSubmit={handleSubmit}>
             <div className="form-group">
-                <label htmlFor="petIage">Pet Image</label>
+                <label htmlFor="petImage">Pet Image</label>
                 <input type="file" id='petImage' name='petImage' accept='image/*' onChange={handleImageChange} required={!pet} />
                 {error && <p className='error'>{error}</p>}
             </div>
