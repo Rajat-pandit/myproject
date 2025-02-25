@@ -8,6 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const ProfileModel= require("./model/Profile");
 const MedicalRecord= require("./model/MedicalRecord");
+const PetModel= require("./model/Pet");
 const session= require("express-session");
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
@@ -255,3 +256,54 @@ app.delete('/api/medical-records/:id', async(req, res) => {
     }
 });
 
+app.post('/api/pets', upload.single('petImage'), async (req, res) => {
+    try{
+        const {PetName, breed, age}= req.body;
+        const petImage= req.file? req.file.patch: null;
+
+        const newPet= new PetModel({
+            PetName,
+            breed,
+            age,
+            image: petImage
+        });
+
+        const savedPet= await newPet.save();
+        res.status(201).json(savedPet);
+    } catch (error) {
+        res.status(500).json({message:'Error adding pet', error});
+    }
+});
+
+app.put('/api/pets/:petId', upload.single('PetImage'), (req,res) =>{
+    const petId= req.params.petId;
+    const {petName, breed,age}= req.body;
+    const petImage= req.file? req.file.path: null;
+
+    if(!petName || !breed ||!age){
+        return res.status(400).json({error:'All fields are required.'});
+    }
+
+    const updateData= {
+        petName,
+        breed,
+        age,
+    };
+
+    if(petImage){
+        updateData.image= petImage;
+    }
+
+    PetModel.findByIdAndUpdate(petId, updateData, {new:true})
+        .then(updatedPet => {
+            if(updatedPet){
+                res.json(updatedPet);
+            } else{
+                res.status(404).json({error:'Pet not found.'});
+            }
+        })
+        .catch(error => {
+            console.error('Error updating pet:', error);
+            res.status(500).json({error: 'Internal server error'});
+        });
+});
