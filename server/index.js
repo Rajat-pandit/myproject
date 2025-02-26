@@ -129,6 +129,7 @@ app.get('/user', (req, res) => {
     }
 });
 
+//for fetching pet profile
 app.get('/api/profiles', (req, res) => {
     if(req.session.user) {
         ProfileModel.find({ownerEmail: req.session.user.email})
@@ -169,6 +170,7 @@ app.get('/api/profiles/:petId', (req, res) => {
     }
 });
 
+//for updating user pet profile
 app.put('/api/profiles/:petId', upload.single('image'), (req, res)=> {
     const petId= req.params.petId;
     const{petsName, ownerName, ownerEmail, age, breed,  contactNumber}= req.body;
@@ -206,6 +208,7 @@ app.put('/api/profiles/:petId', upload.single('image'), (req, res)=> {
     });
 });
 
+//for posting medical record
 app.post('/api/medical-records', async (req, res) => {
     try{
         const {date, vetName, description, diagnosis, treatment, medications,notes, nextVisit, petId}= req.body;
@@ -228,6 +231,7 @@ app.post('/api/medical-records', async (req, res) => {
     }
 });
 
+//for getting medical record
 app.get('/api/medical-records/:petId', async(req,res) => {
     const {petId}= req.params;
 
@@ -247,6 +251,7 @@ app.get('/api/medical-records/:petId', async(req,res) => {
     }
 });
 
+//for deleting medical record
 app.delete('/api/medical-records/:id', async(req, res) => {
     const recordId= req.params.id;
     try{
@@ -260,6 +265,7 @@ app.delete('/api/medical-records/:id', async(req, res) => {
     }
 });
 
+//for postinf the available pets
 app.post('/api/pets', upload.single('petImage'), async (req, res) => {
     try{
         const {petName, breed, age}= req.body;
@@ -279,6 +285,7 @@ app.post('/api/pets', upload.single('petImage'), async (req, res) => {
     }
 });
 
+//for editing the adoptable pets information
 app.put('/api/pets/:petId', upload.single('petImage'), (req,res) =>{
     const petId= req.params.petId;
     const {petName, breed,age}= req.body;
@@ -312,6 +319,7 @@ app.put('/api/pets/:petId', upload.single('petImage'), (req,res) =>{
         });
 });
 
+//for fetching the avilable pets for adoption
 app.get('/api/pets', async(req, res)=>{
     try{
         const pets= await PetModel.find();
@@ -329,6 +337,7 @@ app.get('/api/pets', async(req, res)=>{
     }
 });
 
+//for deleting the pets for adoption
 app.delete('/api/pets/:id', async(req, res) => {
     try{
         const petId= req.params.id;
@@ -345,6 +354,7 @@ app.delete('/api/pets/:id', async(req, res) => {
     }
 });
 
+//for posting adoption request
 app.post("/adopt", async(req, res)=>{
     const {petId, userName}= req.body;
     try{
@@ -374,6 +384,7 @@ app.post("/adopt", async(req, res)=>{
     }
 });
 
+//for getting adoption request
 app.get('/admin/adoption-requests', async(req, res)=>{
     try{
         const requests = await RequestModel.find()
@@ -387,6 +398,7 @@ app.get('/admin/adoption-requests', async(req, res)=>{
     }
 });
 
+//email dependicies
 const transporter= nodemailer.createTransport({
     service:'gmail',
     auth:{
@@ -415,6 +427,7 @@ const sendEmail = async (userEmail, status, petName, breed)=>{
     }
 };
 
+//updating the database for status and sending mail
 app.patch('/admin/adoption-requests/:id', async(req, res) =>{
     const requestId= req.params.id;
     const {status} = req.body;
@@ -439,6 +452,7 @@ app.patch('/admin/adoption-requests/:id', async(req, res) =>{
     }
 });
 
+// route for sending email
 app.post('/admin/send-email', async(req,res)=>{
     const {userEmail, status, petName, breed}= req.body;
     try{
@@ -447,5 +461,42 @@ app.post('/admin/send-email', async(req,res)=>{
     } catch (error){
         console.error('Error sending email:', error);
         res.status(500).send('Failed to send email');
+    }
+});
+
+//fetching total user in admin
+app.get('/api/users/total', async (req, res) =>{
+    try{
+        const totalUsers= await UserModel.countDocuments();
+        res.json({totalUsers});
+    } catch (error){
+        console.error('Error fetching total users:', error);
+        res.status(500).json({message:'Server error'});
+    }
+});
+
+//for getting user details in admin
+app.get('/api/admin/users', async(req, res)=>{
+    try{
+        const users= await UserModel.find({}, 'name email registrationDate');
+        res.json(users);
+    } catch (error){
+        console.error('Error fetching user details:', error);
+        res.status(500).json({message:'Server error'});
+    }
+});
+
+//for deleting user list
+app.delete('/api/admin/users/:userId', async(req, res)=>{
+    const userId= req.params.userId;
+    try{
+        const user= await UserModel.findByIdAndDelete(userId);
+        if(!user){
+            return res.status(404).send('User not found');
+        }
+        res.status(200).json({message:'User deleted successfully'});
+    } catch(error){
+        console.error("Error deleteing user:", error);
+        res.status(500).json({message:'Server error'});
     }
 });
