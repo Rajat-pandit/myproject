@@ -19,7 +19,7 @@ const Dashboard= () =>{
 
                 axios.get('http://localhost:3001/admin/adoption-requests', {withCredentials:true})
                     .then(response =>{
-                        const pendingRequests= response.data.filter(requestAnimationFrame.status ==='pending');
+                        const pendingRequests= response.data.filter(request =>request.status ==='pending');
                         setTotalPendingRequests(pendingRequests.length);
                     })
                     .catch(error => console.error('Error fetching adoption requets.', error));
@@ -51,7 +51,7 @@ const Dashboard= () =>{
                             <p><strong>Total Pets:</strong>{totalPets}</p>
                             <p><strong>Total Users:</strong>{totalUsers}</p>
                             <p><strong>Succesful Adoptions:</strong>10</p>
-                            <p><strong>Pending Requests::</strong>{totalPendingRequests}</p>
+                            <p><strong>Pending Requests:</strong>{totalPendingRequests}</p>
                         </div>
                     </div>
 

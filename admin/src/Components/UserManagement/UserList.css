@@ -1,0 +1,95 @@
+.userlist-container{
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.userlist-conatiner h2{
+    text-align: center;
+}
+
+.userlist-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.userlist-table th, .userlist-table td{
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.userlist-table th{
+    background-color: #6fbfb9;
+    color: white;
+}
+
+.userlist-table td{
+    font-size: 1rem;
+}
+
+.userlist-table tr:hover{
+    background-color: #f1f1f1;
+}
+
+.userlist-button{
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+    font-size: 1rem;
+    width: auto;
+}
+
+.userlist-button:disabled{
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.userlist-button.delete-user:hover{
+    background-color: #c62828;
+}
+
+.MuiModal-root{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.userlist-modal{
+    width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius:8px ;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.MuiTypography-root{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.MuiButton-root{
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+.MuiButton-root.MuiButton-containedError:hover{
+    background-color: #c62828;
+}
+
+.MuiButton-root.MuiButton-outlined{
+    margin-left: 20px;
+}
+
+.MuiButton-root.MuiButton-root.MuiButton-containedError,.MuiButton-root.MuiButton-outlined{
+    display: inline-block;
+    margin: 10px auto;
+    width: auto;
+}
+
