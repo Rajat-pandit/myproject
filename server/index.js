@@ -9,9 +9,11 @@ const path = require("path");
 const ProfileModel= require("./model/Profile");
 const MedicalRecord= require("./model/MedicalRecord");
 const PetModel= require("./model/Pet");
+const RequestModel= require("./model/AdoptionRequest");
 const session= require("express-session");
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
+const nodemailer= require('nodemailer');
 dotenv.config();
 const app= express();
 const server = require('http').Server(app);
@@ -340,5 +342,110 @@ app.delete('/api/pets/:id', async(req, res) => {
     } catch (error){
         console.error('Error deleting pet:', error);
         res.status(500).json({message:'Server error'});
+    }
+});
+
+app.post("/adopt", async(req, res)=>{
+    const {petId, userName}= req.body;
+    try{
+        const user= await UserModel.findOne({name:userName});
+        const pet= await PetModel.findById(petId);
+
+        if(!user || !pet){
+            return res.status(400).json({message: "User or Pet not found"});
+        }
+
+        const newAdoptionRequest= new RequestModel({
+            petId: pet._id,
+            userId: user._id,
+            breed: pet.breed,
+            email: user.email,
+            status: "pending",
+        });
+
+        await newAdoptionRequest.save();
+        res.status(200).json({
+            message:`Adoption request for ${pet.petName} has been successfully submitted!`,
+            adoptionRequest:newAdoptionRequest,
+        });
+    } catch (err){
+        console.error("Error during adoption request:", err);
+        res.status(500).json({message:"Error processing the adoption request", error: err});
+    }
+});
+
+app.get('/admin/adoption-requests', async(req, res)=>{
+    try{
+        const requests = await RequestModel.find()
+        .populate('userId', 'name email')
+        .populate('petId', 'petName breed');
+
+        res.json(requests);
+    } catch(err){
+        console.error('Error fetching adoption requests:', err);
+        res.status(500).json({message:'Error fetching adoption requests'});
+    }
+});
+
+const transporter= nodemailer.createTransport({
+    service:'gmail',
+    auth:{
+        user: 'razatp2203@gmail.com',
+        pass: 'sduq lleg xryn qlak',
+    },
+});
+
+const sendEmail = async (userEmail, status, petName, breed)=>{
+    const subject = status === 'approved' ? 'Adoption Request Approved': 'Adoption Request Rejected';
+    const text = status ==='approved' ? `Congratulations! Your adoption request for ${petName} (${breed}) has been approved.`
+    : `Sorry, your adoption request for ${petName} (${breed}) has been rejected.`;
+
+    const mailOptions ={
+        from: 'razatp2203@gmail.com',
+        to: userEmail,
+        subject: subject,
+        text: text,
+    };
+
+    try{
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+    } catch(error){
+        console.error('Error sending email:', error);
+    }
+};
+
+app.patch('/admin/adoption-requests/:id', async(req, res) =>{
+    const requestId= req.params.id;
+    const {status} = req.body;
+
+    if(!mongoose.Types.ObjectId.isValid(requestId)){
+        return res.status(400).json({message: 'Invalid request Id'});
+    }
+
+    try{
+        const request= await RequestModel.findById(requestId).populate('userId petId');
+        if(!request){
+            return res.status(404).json({message: 'Request not found'});
+        }
+
+        request.status= status;
+        await request.save();
+
+        res.json(request);
+    } catch(err){
+        console.error('Error updating request:', err);
+        res.status(400).json({message:'Failed to update request'});
+    }
+});
+
+app.post('/admin/send-email', async(req,res)=>{
+    const {userEmail, status, petName, breed}= req.body;
+    try{
+        await sendEmail(userEmail, status, petName, breed);
+        res.status(200).send('Email sent successfully');
+    } catch (error){
+        console.error('Error sending email:', error);
+        res.status(500).send('Failed to send email');
     }
 });
