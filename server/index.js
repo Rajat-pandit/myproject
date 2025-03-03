@@ -14,6 +14,7 @@ const session= require("express-session");
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
 const nodemailer= require('nodemailer');
+const AdminModel= require('./model/AdminModel');
 dotenv.config();
 const app= express();
 const server = require('http').Server(app);
@@ -497,6 +498,32 @@ app.delete('/api/admin/users/:userId', async(req, res)=>{
         res.status(200).json({message:'User deleted successfully'});
     } catch(error){
         console.error("Error deleteing user:", error);
+        res.status(500).json({message:'Server error'});
+    }
+});
+
+//Admin SignUp Route
+app.post('/admin/signup', async(req, res)=>{
+    const {name, email, password}= req.body;
+
+    const existingAdmin= await AdminModel.findOne({email});
+    if (existingAdmin){
+        return res.status(400).json({message:'Email Already in Use'});
+    }
+
+    const hashedPassword= await bcrypt.hash(password, 10);
+
+    const newAdmin= new AdminModel({
+        name,
+        email,
+        password:hashedPassword
+    });
+
+    try{
+        await newAdmin.save();
+        res.status(201).json({message: 'Admin Signed up Successfylly.'});
+    } catch (error){
+        console.error('Error signing up admin:', error);
         res.status(500).json({message:'Server error'});
     }
 });
