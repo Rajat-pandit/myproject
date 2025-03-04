@@ -33,6 +33,11 @@ th{
     color: white;
 }
 
+.approve-btn:hover{
+    background-color: #5bc55f;
+    color: white;
+}
+
 .approve-btn:disabled{
     background-color: #a5d6a7;
     cursor: not-allowed;
@@ -41,6 +46,12 @@ th{
 .reject-btn{
     background-color: #f44336;
     color: white;
+    margin-left: 10px;
+}
+
+.reject-btn:hover{
+    background-color: #db453a;
+    color: white;
 }
 
 .reject-btn:disabled{
@@ -48,6 +59,21 @@ th{
     cursor: not-allowed;
 }
 
+.adopt-delete-btn{
+    padding: 8px 16px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+    background-color: #f13426;
+}
+
+.adopt-delete-btn:hover{
+    background-color: #db453a;
+    color: white;
+}
 .error{
     color: red;
     font-weight: bold;

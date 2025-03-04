@@ -396,6 +396,23 @@ app.get('/admin/adoption-requests', async(req, res)=>{
     }
 });
 
+//deleting adoption request from admin
+app.delete('/admin/adoption-requests/:id', async (req, res) => {
+    try{
+        const requestId= req.params.id;
+        const request= await RequestModel.findById(requestId);
+        if(!request){
+            return res.status(404).json({message: 'Adoption request not found'});
+        }
+
+        await RequestModel.findByIdAndDelete(requestId);
+        res.status(200).json({message:'Adoption request deleted successfully'});
+    } catch (error){
+        console.error("Error deleting adoption request:", error);
+        res.status(500).json({message:'Error deleting adoption request'});
+    }
+});
+
 //email dependicies
 const transporter= nodemailer.createTransport({
     service:'gmail',

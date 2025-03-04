@@ -54,6 +54,21 @@ const AdoptionRequest= ()=>{
         }
     };
 
+   const handleDeleteRequest= async (requestId)=>{
+        if (!requestId) {
+            console.err('Invalid requestId:', requestId);
+            return;
+        }
+        try{
+            await axios.delete(`http://localhost:3001/admin/adoption-requests/${requestId}`, {withCredentials:true});
+            console.log('Request Deleted Successfully.', requestId);
+            setRequests((prevRequests)=> prevRequests.filter((request)=>request._id !==requestId));
+        } catch (err){
+            console.error('Error deleting adoption request:',err.response ? err.response.data : err.message);
+            setError('Error deleting adoption request');
+        }
+    };
+
     return (
         <div className="adoption-requests">
             <h1>Adoption Requests</h1>
@@ -95,6 +110,7 @@ const AdoptionRequest= ()=>{
                                     }} disabled={request.status === 'rejected'}>
                                         Reject
                                     </button>
+                                    <button className='adopt-delete-btn' onClick={()=> handleDeleteRequest(request._id)}>Delete</button>
                                 </td>
                             </tr>
                         )
