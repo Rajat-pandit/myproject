@@ -54,7 +54,7 @@ function SignUp(){
 
                     </form>
                     {error && <p style={{color:'red', fontWeight:'600', textAlign:'center'}}>{error}</p>}
-                    <p>Already have an account? <Link href="admin/login">Login</Link></p>
+                    <p>Already have an account? <Link href="/admin/login">Login</Link></p>
                 </Paper>
             </Grid2>
         </div>
