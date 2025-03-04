@@ -36,12 +36,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave:false,
-    saveUninitialized: true,
-    store: MongoStore.create({
-        mongoUrl:process.env.MONGO_URI
-    }),
-    cookie:{maxAge:24 * 60 * 60*  1000}
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: process.env.NODE_ENV === 'production'}
 }));
 
 mongoose.connect(process.env.MONGO_URI)
@@ -525,5 +522,27 @@ app.post('/admin/signup', async(req, res)=>{
     } catch (error){
         console.error('Error signing up admin:', error);
         res.status(500).json({message:'Server error'});
+    }
+});
+
+//Admin Login
+app.post("/admin/login", async(req, res)=>{
+    try{
+        const {email, password}= req.body;
+        const admin= await AdminModel.findOne({email});
+        if(!admin){
+            return res.status(404).json({message:"Admin not found"});
+        }
+        const isPasswordMatch= await bcrypt.compare(password, admin.password);
+        if(!isPasswordMatch){
+            return res.status(401).jsin({message:"Incorrect password"});
+        }
+
+        req.session.admin= {id: admin._id, name: admin.name, email: admin.email};
+        console.log("Session after login:", req.session);
+        res.status(200).json({message:"Login Successful"});
+    } catch (error){
+        console.error("Login error:", error);
+        res.status(500).json({message:"Internal server error"});
     }
 });
