@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Button, Modal, Box, Typography} from '@mui/material';
-// import {Visibility} from '@mui/icons-material';
+import {Visibility} from '@mui/icons-material';
 import './UserList.css'
+import { useNavigate } from 'react-router-dom';
+
 
 const UserList= ()=>{
     const [users, setUsers]= useState([]);
     const [openModal, setOpenModal]= useState(false);
     const [selectedUserId, setSelectedUserId]= useState(null);
-    
+    const navigate = useNavigate();
 
     useEffect(()=>{
         axios.get('http://localhost:3001/api/admin/users')
@@ -46,6 +48,10 @@ const UserList= ()=>{
             handleCloseModal();
     };
 
+    const handleViewUser= (userEmail)=> {
+        navigate(`/admin/user/${userEmail}/view`);
+    };
+
 
     return(
         <div className="userlist-container">
@@ -67,7 +73,10 @@ const UserList= ()=>{
                             <td>{user.email}</td>
                             <td>{new Date(user.registrationDate).toLocaleDateString()}</td>
                             <td>
-                                <Button className='userlist-button' variant='contained' color='error' onClick={()=>handleOpenModal(user._id)}>
+                                <Button className='userlist-button view-user' variant='outlined' startIcon={<Visibility/>} onClick={()=> handleViewUser(user.email)}>
+                                View User
+                                </Button>
+                                <Button className='userlist-button delete-user' variant='contained' color='error' onClick={()=>handleOpenModal(user._id)}>
                                     Delete User
                                 </Button>
                             </td>

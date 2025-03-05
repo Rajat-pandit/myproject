@@ -6,6 +6,7 @@ import PetManagement from "./Components/PetManagement/PetManagement";
 import UserList from "./Components/UserManagement/UserList";
 import SignUp from "./Components/LoginSignUp/SignUp";
 import Login from "./Components/LoginSignUp/Login";
+import ViewProfile from "./Components/UserManagement/ViewProfile";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/admin/signup" element={<SignUp/>}></Route>
       <Route path="/admin/login" element={<Login/>}></Route>
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/admin/user/:userEmail/view" element={<ViewProfile />} />
 
 
       </Routes>
