@@ -516,6 +516,25 @@ app.delete('/api/admin/users/:userId', async(req, res)=>{
     }
 });
 
+// getting all the profile data in admin
+app.get('/api/admin/user/:userEmail/pets', async (req, res) => {
+    try{
+        const {userEmail}= req.params;
+        const petProfiles= await ProfileModel.find({ownerEmail: userEmail});
+        const ownerDetails= await ProfileModel.findOne({ownerEmail: userEmail}).select('ownerName contactNumber');
+
+        if(petProfiles.length >0 && ownerDetails){
+            res.json({petProfiles, ownerDetails});
+        } else{
+            res.status(404).send({message:"No pet profiles or owner details for this user."});
+        }
+    } catch (err){
+        console.error('Error fetching data:', err);
+        res.status(500).send({message:'Error fetching pet profiles and owner details.'});
+
+    }
+});
+
 //Admin SignUp Route
 app.post('/admin/signup', async(req, res)=>{
     const {name, email, password}= req.body;
