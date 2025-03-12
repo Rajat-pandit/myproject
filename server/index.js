@@ -6,14 +6,17 @@ const dotenv= require("dotenv");
 const UserModel= require("./model/User");
 const multer = require("multer");
 const path = require("path");
+const axios = require('axios');  // Import axios
 const ProfileModel= require("./model/Profile");
 const MedicalRecord= require("./model/MedicalRecord");
 const PetModel= require("./model/Pet");
 const RequestModel= require("./model/AdoptionRequest");
 const session= require("express-session");
+const Reminder = require('./model/Reminder');
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
 const nodemailer= require('nodemailer');
+const cron = require('node-cron');
 const AdminModel= require('./model/AdminModel');
 dotenv.config();
 const app= express();
@@ -417,8 +420,8 @@ app.delete('/admin/adoption-requests/:id', async (req, res) => {
 const transporter= nodemailer.createTransport({
     service:'gmail',
     auth:{
-        user: 'razatp2203@gmail.com',
-        pass: 'sduq lleg xryn qlak',
+        user: 'fureverfriends2216@gmail.com',
+        pass: 'ofxo xtte mmic smjo',
     },
 });
 
@@ -580,5 +583,145 @@ app.post("/admin/login", async(req, res)=>{
     } catch (error){
         console.error("Login error:", error);
         res.status(500).json({message:"Internal server error"});
+    }
+});
+
+//getting reminders from db
+app.get('/reminders/:petId', async(req, res)=> {
+    try{
+        const reminders= await Reminder.find({petId: req.params.petId});
+        res.json(reminders);
+    } catch (err) {
+        console.error('Error fetching remonders:', err);
+        res.status(500).json({message:'Failed to fetch reminders'});
+    }
+});
+
+const sendReminderEmail = async (userEmail, petName, reminderDetails) => {
+    console.log('Sending reminder email:', userEmail, petName, reminderDetails); 
+    
+    const subject = 'Reminder: Task for your pet';
+    const text = `Hello!
+  
+  This is a friendly reminder for your upcoming task : "${reminderDetails.title}" with your pet, ${petName}.
+  
+  Task Details:
+  - Date: ${reminderDetails.date}
+  - Time: ${reminderDetails.time}
+  - Description: ${reminderDetails.description}
+  
+  We hope everything goes smoothly!
+  
+  Best regards,  
+  The Furever Friends Team`;
+  
+  
+    const mailOptions = {
+      from: 'fureverfriends2216@gmail.com',
+      to: userEmail,
+      subject: subject,
+      text: text,
+    };
+  
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('Reminder email sent successfully');
+    } catch (error) {
+      console.error('Error sending reminder email:', error);
+    }
+  };
+
+
+//route to schedule remider email
+const scheduleReminderEmails = (date, time, userEmail, petName, reminderDetails) => {
+    const reminderDateTime = new Date(`${date}T${time}`);
+  
+    // One day before reminder
+    const oneDayBefore = new Date(reminderDateTime);
+    oneDayBefore.setDate(oneDayBefore.getDate() - 1);
+  
+    // Two hours before reminder
+    const twoHoursBefore = new Date(reminderDateTime);
+    twoHoursBefore.setHours(twoHoursBefore.getHours() - 2);
+  
+    // Send email one day before reminder
+    const dayBeforeCron = `${oneDayBefore.getMinutes()} ${oneDayBefore.getHours()} ${oneDayBefore.getDate()} ${oneDayBefore.getMonth() + 1} *`; 
+    cron.schedule(dayBeforeCron, async () => {
+      await axios.post('http://localhost:3001/send-reminder-email', {
+        userEmail, petName, reminderDetails
+      });
+    });
+  
+    // Send email two hours before reminder
+    const twoHoursBeforeCron = `${twoHoursBefore.getMinutes()} ${twoHoursBefore.getHours()} ${twoHoursBefore.getDate()} ${twoHoursBefore.getMonth() + 1} *`; 
+    cron.schedule(twoHoursBeforeCron, async () => {
+      await axios.post('http://localhost:3001/send-reminder-email', {
+        userEmail, petName, reminderDetails
+      });
+    });
+  };
+  
+
+
+//route for sending posting the reminders on db.
+app.post('/reminders', async (req, res) => {
+    try {
+      const { petId, title, description, date, time, userEmail } = req.body;
+
+      const pet = await ProfileModel.findById(petId); 
+  
+      if (!pet) {
+        return res.status(404).json({ message: 'Pet not found' });
+      }
+  
+      const newReminder = new Reminder({
+        petId, 
+        petName: pet.petsName, 
+        title,
+        description,
+        date,
+        time,
+        userEmail
+      });
+      const savedReminder = await newReminder.save();
+  
+      scheduleReminderEmails(date, time, userEmail, pet.petsName, {
+        title,
+        date,
+        time,
+        description
+      });
+  
+      res.status(200).json(savedReminder);
+    } catch (err) {
+      console.error('Error saving reminder:', err);
+      res.status(500).json({ message: 'Error saving reminder' });
+    }
+  });
+
+//route to send reminder emails
+app.post('/send-reminder-email', async (req, res) => {
+    const { userEmail, petName, reminderDetails } = req.body;
+    
+    try {
+      await sendReminderEmail(userEmail, petName, reminderDetails);
+      res.status(200).send({ message: 'Reminder email sent successfully' });
+    } catch (err) {
+      res.status(500).send({ message: 'Error sending reminder email', error: err.message });
+    }
+  });
+
+//deleting the reminders
+app.delete('/reminder/:id', async (req, res)=>{
+    try{
+        const reminderId= req.params.id;
+        const deletedReminder= await Reminder.findByIdAndDelete(reminderId);
+        if(!deletedReminder){
+            return res.status(404).json({message:'Reminder not found'});
+        }
+        res.status(200).json({message:'Reminder deleted successfully'});
+    } catch (error){
+        console.error(error);
+        res.status(500).json({message:'Server Error'});
     }
 });

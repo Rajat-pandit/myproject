@@ -19,6 +19,8 @@ function Login({setIsLoggedIn, setUser}) {
                             if(response.data.user){
                                 setIsLoggedIn(true);
                                 setUser(response.data.user);
+                                localStorage.setItem('userName',response.data.user.name);
+                                localStorage.setItem('userEmail', response.data.user.email);
                                 navigate("/home", {state: {user: response.data.user}});
                             }
                         });

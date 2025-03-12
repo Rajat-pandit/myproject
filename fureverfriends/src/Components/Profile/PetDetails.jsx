@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../Navbar/Navbar';
 import EditProfile from './EditProfile';
 import Medical from './Medical';
+import Reminder from './ReminderForm';
 import {CircularProgress, Box} from '@mui/material';
 import './Profile.css';
 
@@ -12,6 +13,7 @@ const PetDetails = ({user}) => {
     const [petData, setPetData]= useState(null);
     const [isEditMode, setIsEditMode]= useState(false);
     const [isMedicalMode, setIsMedicalMode]= useState(false);
+    const [isReminderMode, setIsReminderMode]= useState(false);
 
     useEffect(() =>{
         axios.get(`http://localhost:3001/api/profiles/${petId}`, {withCredentials: true})
@@ -25,10 +27,20 @@ const PetDetails = ({user}) => {
 
     const handleEditClick= ()=>{
         setIsEditMode(true);
+        setIsMedicalMode(false);
+        setIsReminderMode(false);
     }
 
     const handleMedicalClick= () =>{
         setIsMedicalMode(true);
+        setIsEditMode(false);
+        setIsReminderMode(false);
+    }
+
+    const handleReminderClick= ()=>{
+        setIsReminderMode(true);
+        setIsMedicalMode(false);
+        setIsEditMode(false);
     }
 
     const handleSaveChanges =(updatedPetData)=>{
@@ -55,16 +67,19 @@ const PetDetails = ({user}) => {
             <div className="options">
                 <ul>
                     <li onClick={handleMedicalClick}>Medical Records</li>
-                    <li>Reminders</li>
+                    <li onClick={handleReminderClick}>Reminders</li>
                     <li onClick={handleEditClick}>Edit Profile</li>
                 </ul>
             </div>
         </div>
 
         <div className="right-section">
-             {isMedicalMode ? (
-                <Medical petId={petId}/>):
-                isEditMode ? (
+            {isReminderMode ? (
+                <Reminder petId={petId}/>
+            ) :
+             isMedicalMode ? (
+                <Medical petId={petId}/>)
+                :isEditMode ? (
                 <EditProfile petData={petData} onSaveChanges={handleSaveChanges}></EditProfile>
             ) : (
                 <>
