@@ -1,0 +1,166 @@
+.reminder-container{
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.reminder-heading{
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.reminder-list ul{
+    list-style-type: none;
+    padding: 0;
+}
+
+.reminder-list li{
+    background-color: #fff;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.reminder-list li strong{
+    font-size: 18px;
+    color: #333;
+}
+
+.reminder-list li p{
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+.reminder-delete-button{
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.reminder-delete-button:hover{
+    background-color: darkred;
+}
+
+.reminder-add{
+    background-color: #1d88a8;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.reminder-add:hover{
+    background-color: #4dbdb7;
+}
+
+.reminder-form-container{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.reminder-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label{
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input, .form-group textarea{
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus, .form-group textarea:focus{
+    border-color: #76d3cd;
+    outline: none;
+}
+
+textarea{
+    resize: vertical;
+}
+
+.button-group{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+button{
+    background-color: #1d88a8;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: #4dbdb7;
+}
+
+.custom-cancel-buton{
+    background-color: #e74c3c;
+}
+
+.custom-cancel-buton:hover{
+    background-color: #c0392b;
+}
+
+@media (max-width:600px) {
+    .reminder-container{
+        padding: 15px;
+    }
+
+    .reminder-form-container{
+        padding: 15px;
+        width: 100%;
+    }
+
+    .button-group{
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .reminder-add{
+        width: 100%;
+    }
+
+    .reminder-delete-button{
+        width: 100%;
+    }
+    
+}
