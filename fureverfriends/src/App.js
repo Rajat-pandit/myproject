@@ -7,6 +7,7 @@ import Manage from "./Components/Profile/Manage";
 import Create from "./Components/Profile/Create";
 import PetDetails from "./Components/Profile/PetDetails";
 import Adoption from "./Components/Services/Adoption";
+import EmergencyCardForm from "./Components/Services/EmergencyCard";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
@@ -33,6 +34,8 @@ function App() {
         <Route path="/create" element={isLoggedIn ? <Create/> : <Navigate to="/login"/>}/>
         <Route path="/pet/:petId" element={isLoggedIn ? <PetDetails user={user}/> :<Navigate to="/login"/>} />
         <Route path= "/adoption" element={isLoggedIn ? <Adoption user={user}/> : <Navigate to= "/login"/>}></Route>
+        <Route path= "/card" element={isLoggedIn ? <EmergencyCardForm user={user}/> : <Navigate to= "/login"/>}></Route>
+
         </Routes>
       </Router>
     
