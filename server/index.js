@@ -13,6 +13,7 @@ const PetModel= require("./model/Pet");
 const RequestModel= require("./model/AdoptionRequest");
 const session= require("express-session");
 const Reminder = require('./model/Reminder');
+const EmergencyCard= require('./model/EmergencyCard');
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
 const nodemailer= require('nodemailer');
@@ -723,5 +724,64 @@ app.delete('/reminder/:id', async (req, res)=>{
     } catch (error){
         console.error(error);
         res.status(500).json({message:'Server Error'});
+    }
+});
+
+//Backend for emergency card saving
+app.post('/emergency-card', async (req, res) => {
+    const {petName, ownerName, contactNumber, emergencyText,senderEmail, recipientEmail}= req.body;
+
+    const emergencyCard= new EmergencyCard({
+        petName,
+        ownerName,
+        contactNumber,
+        emergencyText,
+        senderEmail,
+        recipientEmail,
+    });
+
+    try {
+        const savedCard= await emergencyCard.save();
+        res.status(200).json(savedCard);
+
+    } catch (error){
+        console.error('Error saving emergency card', error);
+        res.status(500).json({error:'Something went wrong. Please try again'});
+    }
+});
+
+//route for sending email for emergency card
+app.post('/send-email', async (req, res)=>{
+    const {emergencyCardId}= req.body;
+    try{
+        const card= await EmergencyCard.findById(emergencyCardId);
+        if(!card){
+            return res.status(404).json({success:false, message:'Emergeny card not found'});
+        }
+        console.log('Card details:', card);
+
+        const {recipientEmail, emergencyText, senderEmail, petName, ownerName, contactNumber}= card;
+        console.log('Sender Email:', senderEmail);
+
+        const emailSubject= `Emergency Alert for pet:${petName} | From: ${ownerName}`;
+        const emailBody= `
+        Emergency Card Details:
+        Pet Name: ${petName}
+        Owner Name: ${ownerName}
+        Contact Number: ${contactNumber}
+        Emergency Details: ${emergencyText}`;
+
+        const emailDetails={
+            from:senderEmail,
+            to: recipientEmail,
+            subject: emailSubject,
+            text: emailBody,
+        };
+
+        const info= await transporter.sendMail(emailDetails);
+        res.status(200).json({success:true, message:'Email sent successfully', response: info.response});
+    } catch (error){
+        console.error('Error sending email', error);
+        res.status(500).send('Failed to send email');
     }
 });

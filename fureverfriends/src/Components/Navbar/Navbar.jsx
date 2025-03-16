@@ -52,7 +52,7 @@ export const Navbar = ({user}) => {
                 <ul className='dropdown-menu'>
                   <li onClick={(e) => handleDropdownItemClick(e, '/service1')}>Service 1</li>
                   <li onClick={(e) => handleDropdownItemClick(e, '/adoption')}>Adoption</li>
-                  <li onClick={(e) => handleDropdownItemClick(e, '/service3')}>Service 3</li>
+                  <li onClick={(e) => handleDropdownItemClick(e, '/card')}>Emergency Card</li>
 
                 </ul>
               )}
