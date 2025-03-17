@@ -8,6 +8,7 @@ import Create from "./Components/Profile/Create";
 import PetDetails from "./Components/Profile/PetDetails";
 import Adoption from "./Components/Services/Adoption";
 import EmergencyCardForm from "./Components/Services/EmergencyCard";
+import UserSettings from "./Components/Settings/Settings";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn]= useState(false);
@@ -35,6 +36,8 @@ function App() {
         <Route path="/pet/:petId" element={isLoggedIn ? <PetDetails user={user}/> :<Navigate to="/login"/>} />
         <Route path= "/adoption" element={isLoggedIn ? <Adoption user={user}/> : <Navigate to= "/login"/>}></Route>
         <Route path= "/card" element={isLoggedIn ? <EmergencyCardForm user={user}/> : <Navigate to= "/login"/>}></Route>
+        <Route path= "/settings" element={isLoggedIn ? <UserSettings user={user}/> : <Navigate to= "/login"/>}></Route>
+
 
         </Routes>
       </Router>

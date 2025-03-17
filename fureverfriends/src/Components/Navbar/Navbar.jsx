@@ -63,7 +63,7 @@ export const Navbar = ({user}) => {
               {profileDropdownOpen && (
                 <ul className="dropdown-menu">
                   <li onClick={(e) => handleDropdownItemClick(e, '/manageprofile')}>Profile</li>
-                  <li onClick={(e) => handleDropdownItemClick(e, '/profile2')}>Profile 2</li>
+                  <li onClick={(e) => handleDropdownItemClick(e, '/settings')}>Settings</li>
                   <li onClick={(e) => handleDropdownItemClick(e, '/profile3')}>Profile 3</li>
 
                 </ul>
