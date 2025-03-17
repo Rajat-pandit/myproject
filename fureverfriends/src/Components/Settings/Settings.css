@@ -1,0 +1,54 @@
+.user-settings-container{
+    display: flex;
+    padding: 20px;
+    margin-top: 60px;
+}
+
+.left-sidebar{
+    background-color: #f4f4f4;
+    padding: 10px;
+    height: 150px;
+}
+
+.sidebar-card{
+    width: 100%;
+}
+
+.selected-item{
+    background-color: #76d3cd;
+}
+
+.list-item{
+    cursor: pointer;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.list-item:hover{
+    background-color: #d3f9f3;
+}
+
+.list-item:before{
+    content: "\2022";
+    color: #76d3cd;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.main-content{
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    margin-left: 40px;
+    height: 400px;
+    width: 60%;
+}
+
+.content-card{
+    padding: 20px;
+}
+
+.card-content{
+    margin: 10px;
+}
