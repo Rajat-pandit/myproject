@@ -3,14 +3,19 @@ import {Card, CardContent, Typography, Grid2, List, ListItem, ListItemText} from
 import './Settings.css';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
+import ChangePassword from './ChangePassword';
 
 const UserSettings= ({user}) => {
     const [activeTab, setActiveTab]= useState('profileSettings');
-
+    const [showPasswordForm, setShowPasswordForm]= useState(false);
     const [currentUser, setCurrentUser]= useState(user);
 
     const handleTabChange= (tab)=> setActiveTab(tab);
 
+    const handleChangePasswordClick= ()=> {
+        setShowPasswordForm(!showPasswordForm);
+
+    }
     useEffect(() => {
         const fetchUserDetails= async()=>{
             try{
@@ -52,7 +57,7 @@ const UserSettings= ({user}) => {
                             Profile Settings
                         </Typography>
                         <List>
-                            <ListItem className='list-item' button >
+                            <ListItem className='list-item' button onClick={handleChangePasswordClick}>
                             <ListItemText primary="Change Password"></ListItemText>
                             </ListItem>
 
@@ -64,6 +69,8 @@ const UserSettings= ({user}) => {
                                 <ListItemText primary='change Image'></ListItemText>
                             </ListItem>
                         </List>
+
+                        {showPasswordForm && <ChangePassword/>}
                         </CardContent>
                     </Card>
                 )}
