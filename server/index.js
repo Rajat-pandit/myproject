@@ -785,3 +785,40 @@ app.post('/send-email', async (req, res)=>{
         res.status(500).send('Failed to send email');
     }
 });
+
+//route for changing password
+app.put("/change-password", async (req, res)=>{
+    try{
+        const {currentPassword, newPassword}= req.body;
+
+        if(!req.session.user){
+            return res.status(401).json({message:'User is not authenticated'});
+        }
+
+        const user= await UserModel.findById(req.session.user.id);
+        if(!user) {
+            return res.status(404).json({message:'User not found'});
+
+        }
+
+        const passwordMatch= await bcrypt.compare(currentPassword, user.password);
+        if(!passwordMatch){
+            return res.status(401).json({message:'Incorrect current password.'});
+        }
+
+        if(currentPassword === newPassword){
+            return res.status(400).json({message:'New password cannot be the same as the current password'});
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword= await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({message:'Password updated successfully.'});
+    } catch (error){
+        res.status(500).json({message:'Server error', error});
+    }
+
+});
