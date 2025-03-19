@@ -79,7 +79,7 @@ app.post("/login", async (req, res) => {
                 req.session.user = {id: user._id, name: user.name, email: user.email};
                 res.json("Success");
             } else{
-                res.status(401).json("Password doesn't match");
+                res.status(500).json("Incorrect Password");
             }
         } else{
             res.status(404).json("No Records found");
@@ -851,6 +851,8 @@ app.put('/user/update', (req, res) => {
     
 });
 
+//route for forgog password and sending email for link
+
 const crypto= require ('crypto');
 
 app.post("/forgot-password", async (req, res) => {
@@ -863,8 +865,8 @@ app.post("/forgot-password", async (req, res) => {
         }
 
         const resetToken= crypto.randomBytes(20).toString('hex');
-        user.resePasswordToken= resetToken;
-        user.resetPasswordExpires= Date.now() + 3600000;
+        user.resetPasswordToken= resetToken;
+        user.resetPasswordExpires= Date.now() +  3600000;
         await user.save();
 
         const transporter= nodemailer.createTransport({
@@ -890,3 +892,38 @@ app.post("/forgot-password", async (req, res) => {
         res.status(500).json({message:"Server error"});
     }
 });
+
+
+//route for reseting password
+app.post("/reset-password", async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      const user = await UserModel.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() },  // Token should not be expired
+      });
+  
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired token" });
+      }
+  
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      // Update the user's password
+      user.password = hashedPassword;
+      user.resetPasswordToken = undefined;  // Remove the reset token
+      user.resetPasswordExpires = undefined;  // Remove the token expiry
+      await user.save();
+  
+      res.status(200).json({ message: "Password successfully reset!" });
+    } catch (error) {
+      console.error('Error in reset-password API:', error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
+  
+  
+  
+  
