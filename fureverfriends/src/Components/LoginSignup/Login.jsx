@@ -1,14 +1,17 @@
 import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
-import {Grid2, Link, Button, Paper, TextField, Typography} from "@mui/material";
-import axios from 'axios'
+import {Grid2, Link, Button, Paper, TextField, Typography, IconButton} from "@mui/material";
+import {Visibility, VisibilityOff} from '@mui/icons-material';
+import axios from 'axios';
 
 function Login({setIsLoggedIn, setUser}) {
     const [email, setEmail]=useState("");
     const [password, setPassword]=useState("");
     const [error, setError]= useState("");
-
+    const [showPassword, setShowPassword]= useState(false);
     const navigate= useNavigate();
+
+
     const handleLogin=(e)=>{
         e.preventDefault();
         axios.post("http://localhost:3001/login", {email, password}, {withCredentials: true})
@@ -54,20 +57,27 @@ function Login({setIsLoggedIn, setUser}) {
   return (
     <div>
         <Grid2 align="center" className="wrapper">
-            <Paper style={paperstyle} sx={{width:{xs: '80vw', sm:'50vw', md:'40vw', lg:'30vw', xl:'20vw'}, height:{lg:'60vh'}}}>
+            <Paper style={paperstyle} sx={{width:{xs: '80vw', sm:'50vw', md:'40vw', lg:'30vw', xl:'20vw'}, height:{lg:'65vh'}}}>
                 <Typography component="h1" variant='h5' style={heading}>Login</Typography>
                 <form onSubmit={handleLogin}>
                     <span style={row}>
                         <TextField sx={{label:{fontWeight:'700', fontSize:"1.3rem"}}} style={label} label="Email" fullWidth variant='outlined' type="email" placeholder='Enter Email' name='email' onChange={(e)=> setEmail(e.target.value)}/>
                     </span>
                     <span style={row}>
-                    <TextField sx={{label:{fontWeight:'700', fontSize:"1.3rem"}}} style={label} label="Password" fullWidth variant='outlined' type="password" placeholder='Enter Password' name='password' onChange={(e)=> setPassword(e.target.value)}/>
+                    <TextField sx={{label:{fontWeight:'700', fontSize:"1.3rem"}}} style={label} label="Password" fullWidth variant='outlined' type={showPassword ? "text" : "password"} placeholder='Enter Password' name='password' onChange={(e)=> setPassword(e.target.value)} InputProps={{
+                        endAdornment:(
+                            <IconButton onClick={()=> setShowPassword(!showPassword)} edge='end'>
+                                {showPassword ? <VisibilityOff/>: <Visibility/>}
+                            </IconButton>
+                        ),
+                    }}/>
                     </span>
                     <Button style={btnStyle} variant='contained' type='submit'>Login</Button>
 
                 </form>
                 {error && <p style={{color: 'red', fontWeight:'600'}}>{error}</p>}
                 <p>Don't have an account? <Link href="/signup">SignUp</Link></p>
+                <p><Link href="/forgotpassword">Forgot Password?</Link></p>
             </Paper>
         </Grid2>
     </div>
@@ -75,3 +85,4 @@ function Login({setIsLoggedIn, setUser}) {
 }
 
 export default Login;
+
