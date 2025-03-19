@@ -850,3 +850,43 @@ app.put('/user/update', (req, res) => {
         });
     
 });
+
+const crypto= require ('crypto');
+
+app.post("/forgot-password", async (req, res) => {
+    try{
+        const {email}= req.body;
+        const user= await UserModel.findOne({email});
+
+        if(!user){
+            return res.status(404).json({message:"User not found"});
+        }
+
+        const resetToken= crypto.randomBytes(20).toString('hex');
+        user.resePasswordToken= resetToken;
+        user.resetPasswordExpires= Date.now() + 3600000;
+        await user.save();
+
+        const transporter= nodemailer.createTransport({
+            service:'gmail',
+            auth:{
+                user:'fureverfriends2216@gmail.com',
+                pass:'ofxo xtte mmic smjo',
+            }
+        });
+        
+        const resetUrl= `http://localhost:3000/reset-password/${resetToken}`;
+        const mailOptions={
+            from:'fureverfriends2216@gmail.com',
+            to: email,
+            subject:'Password Reset Requests',
+            text: `Click the following link to reset your password: ${resetUrl}`,
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({message:"Password reset email sent successfully."});
+    } catch (error){
+        console.error('Erro in forgot password API:', error);
+        res.status(500).json({message:"Server error"});
+    }
+});
