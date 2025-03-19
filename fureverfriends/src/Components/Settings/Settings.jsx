@@ -4,18 +4,32 @@ import './Settings.css';
 import Navbar from '../Navbar/Navbar';
 import axios from 'axios';
 import ChangePassword from './ChangePassword';
+import ChangeDetails from './ChangeDetails';
 
 const UserSettings= ({user}) => {
     const [activeTab, setActiveTab]= useState('profileSettings');
     const [showPasswordForm, setShowPasswordForm]= useState(false);
+    const [showChangeDetailsForm, setShowChangeDetailsForm]= useState(false);
     const [currentUser, setCurrentUser]= useState(user);
 
     const handleTabChange= (tab)=> setActiveTab(tab);
 
     const handleChangePasswordClick= ()=> {
         setShowPasswordForm(!showPasswordForm);
+        setShowChangeDetailsForm(false);
 
-    }
+    };
+
+    const handleChangeDetailsClick= () =>{
+        setShowChangeDetailsForm(!showChangeDetailsForm);
+        setShowPasswordForm(false);
+    };
+
+    const updateUserDetails= (updatedDetails)=> {
+        setCurrentUser(updatedDetails);
+    };
+
+
     useEffect(() => {
         const fetchUserDetails= async()=>{
             try{
@@ -61,7 +75,7 @@ const UserSettings= ({user}) => {
                             <ListItemText primary="Change Password"></ListItemText>
                             </ListItem>
 
-                            <ListItem className='list-item' button>
+                            <ListItem className='list-item' button onClick={handleChangeDetailsClick}>
                             <ListItemText primary="Change Details"></ListItemText>
                             </ListItem>
                             
@@ -71,6 +85,9 @@ const UserSettings= ({user}) => {
                         </List>
 
                         {showPasswordForm && <ChangePassword/>}
+                        {showChangeDetailsForm && (
+                            <ChangeDetails user={currentUser} onUpdate={updateUserDetails}/>
+                        )}
                         </CardContent>
                     </Card>
                 )}

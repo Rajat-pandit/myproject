@@ -1,0 +1,17 @@
+.change-details-card{
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.change-details-field{
+    margin-bottom: 16px;
+}
+
+.change-details-btn{
+    margin-top: 20px;
+    width: 100%;
+}
+
