@@ -822,3 +822,31 @@ app.put("/change-password", async (req, res)=>{
     }
 
 });
+
+//route for updating the user details
+app.put('/user/update', (req, res) => {
+    if(!req.session.user){
+        return res.status(401).json("Not authenticated");
+    }
+    const {name, email}= req.body;
+
+    if(!name && !email){
+        return res.status(400).json("No data to update");
+    }
+
+    UserModel.findByIdAndUpdate(req.session.user.id, {name, email}, {new:true})
+        .then(updatedUser => {
+            if(!updatedUser){
+                return res.status(404).json("User not found");
+            }
+
+            req.session.user.name= updatedUser.name;
+            req.session.user.email= updatedUser.email;
+            res.json({user: updatedUser});
+        })
+        .catch(err => {
+            console.error("Error updating user details:", err);
+            res.status(500).json("Error updating user details");
+        });
+    
+});
