@@ -35,14 +35,14 @@
     gap: 10px;
 }
 
-.profile-image{
+.petprofile-image{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.profile-image:hover{
+.petprofile-image:hover{
     cursor:pointer;
 }
 .profile-name{

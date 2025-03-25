@@ -1,13 +1,39 @@
 import React, { useEffect, useState, useRef} from 'react'
 import './Navbar.css'
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
+import axios from 'axios';
 
-export const Navbar = ({user}) => {
+
+
+export const Navbar = () => {
+  const [user, setUser]= useState(null);
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState (false);
   const serviceDropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const navigate = useNavigate();
+
+
+  useEffect(()=>{
+    const fetchUserData= async()=>{
+      try{
+        const response= await axios.get('http://localhost:3001/user', {
+          withCredentials:true,
+        });
+        if(response.data.user){
+          setUser(response.data.user)
+           console.log("User Image:", response.data.user.image);
+        } else {
+          setUser(null);
+        }
+      } catch (error){
+        console.error('Error fetching user data:', error);
+        setUser(null);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const toggleServicesDropdown =() => {
     setServiceDropdownOpen(!serviceDropdownOpen);
@@ -59,12 +85,26 @@ export const Navbar = ({user}) => {
               </li>
             <li>About</li>
             <li className='dropdown' onClick={toggleProfileDropdown} ref={profileDropdownRef}>
-              {user ?`${user.name}`: "welcome Guest"}<span className={profileDropdownOpen ? 'arrow-up' : 'arrow-down'}>▼</span>
-              {profileDropdownOpen && (
-                <ul className="dropdown-menu">
-                  <li onClick={(e) => handleDropdownItemClick(e, '/manageprofile')}>Profile</li>
-                  <li onClick={(e) => handleDropdownItemClick(e, '/settings')}>Settings</li>
-                  <li onClick={(e) => handleDropdownItemClick(e, '/profile3')}>Profile 3</li>
+              {user ? (
+                <div className="profile">
+                  {user.image ? (
+                    <img src= {`http://localhost:3001/${user.image.replace(/\\/g, '/')}`} alt={user.name} className='profile-image'/>
+                  ):(
+                    <img src='/default-avatar.jpg' alt='Default Avatar' className='profile-image'/>
+                  )}
+                  <span>{user.name}</span>
+                  <span className={profileDropdownOpen ? 'arrow-up' : 'arrow-down'}>▼</span>
+                </div>
+              ) : (
+                <Link to= "/login">
+                  <button>Login</button>
+                </Link>
+              )}
+              {profileDropdownOpen && user && (
+                <ul className='dropdown-menu'>
+                  <li onClick={(e)=> handleDropdownItemClick(e, '/manageprofile')}>Profile</li>
+                  <li onClick={(e)=> handleDropdownItemClick(e, '/settings')}>Settings</li>
+                  <li onClick={(e)=> handleDropdownItemClick(e, '/profile3')}>Profile 3</li>
 
                 </ul>
               )}

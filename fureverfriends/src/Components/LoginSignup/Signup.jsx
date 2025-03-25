@@ -7,12 +7,27 @@ function SignUp(){
   const [name, setName]= useState("");
   const [email, setEmail]= useState("");
   const [password, setPassword]= useState("");
+  const [image, setImage]= useState(null);
   const [error, setError]= useState("");
   const navigate= useNavigate();
 
+  const handleImageChange= (e)=>{
+    setImage(e.target.files[0]);
+  };
+
   const handleSignup= (e)=>{
     e.preventDefault();
-    axios.post("http://localhost:3001/signup", {name, email, password})
+    const formData= new FormData();
+    formData.append("name", name);
+    formData.append("email",email);
+    formData.append("password",password);
+    formData.append("image", image);
+
+    axios.post("http://localhost:3001/signup", formData, {
+      headers:{
+        'Content-Type':'multipart/form-data',
+      },
+    })
         .then(result =>{
           if(result.status === 201){
             navigate("/login");
@@ -45,7 +60,7 @@ function SignUp(){
             xl:'20vw',
           },
           height:{
-            lg:'75vh',
+            lg:'85vh',
           }
         }}>
           <Typography component="h1" variant='h5' style={heading}>Signup</Typography>
@@ -53,6 +68,7 @@ function SignUp(){
             <TextField style={row} required sx={{label: {fontWeight:'700', fontSize:"1.3rem"}}} fullWidth type="text" label='Enter Name' variant='outlined'  placeholder="Enter Name" name='name' onChange={(e) =>setName(e.target.value)}/>
             <TextField style={row} required sx={{label: {fontWeight:'700', fontSize:"1.3rem"}}} fullWidth label='Email' variant='outlined' type="email" placeholder='Enter Email' name='email' onChange={(e) =>setEmail(e.target.value)}/>
             <TextField style={row} required sx={{label: {fontWeight:'700', fontSize:"1.3rem"}}} fullWidth label='Password' variant='outlined' type="password"  placeholder="Enter Password" name='password' onChange={(e) =>setPassword(e.target.value)}/>
+            <input type='file' accept='image/*' onChange={handleImageChange} style={row}/>
             <Button style={btnStyle} variant='contained' type='submit'>Signup</Button>
             
           </form>
