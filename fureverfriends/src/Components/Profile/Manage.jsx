@@ -34,7 +34,7 @@ export const Manage = ({user}) => {
         <div className="profile-display">
           {profiles.map((profile)=> (
                 <div className="profile-item" key={profile._id} onClick={() => handlePetClick(profile._id)}>
-                  <div className="profile-image">
+                  <div className="petprofile-image">
                     <img src={`http://localhost:3001/${profile.image.replace(/\\/g, '/')}`} alt={profile.petsName}
                     style= {{width:120, height:120, border:'5px gray',borderRadius: '50%', objectFit:'cover',}} />
                     <div className="profile-name">

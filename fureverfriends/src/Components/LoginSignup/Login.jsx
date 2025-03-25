@@ -16,7 +16,7 @@ function Login({setIsLoggedIn, setUser}) {
         e.preventDefault();
         axios.post("http://localhost:3001/login", {email, password}, {withCredentials: true})
             .then(result => {
-                if(result.data === "Success"){
+                if(result.data.message === "Success"){
                     axios.get('http://localhost:3001/user', {withCredentials: true})
                         .then(response => {
                             if(response.data.user){
@@ -24,6 +24,7 @@ function Login({setIsLoggedIn, setUser}) {
                                 setUser(response.data.user);
                                 localStorage.setItem('userName',response.data.user.name);
                                 localStorage.setItem('userEmail', response.data.user.email);
+                                localStorage.setItem('userImage', response.data.user.image);
                                 navigate("/home", {state: {user: response.data.user}});
                             }
                         });

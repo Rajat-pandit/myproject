@@ -53,42 +53,6 @@ app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
 });
 
-app.post("/signup", async(req , res) => {
-    try{
-        const{name, email, password} = req.body;
-        const existingUser= await UserModel.findOne({email});
-        if(existingUser){
-            return res.status(400).json({error: "Email already exists"});
-        }
-        const hashedPassword= await bcrypt.hash(password, 10);
-        const newUser= new UserModel({name, email, password:hashedPassword});
-        const savedUser= await newUser.save();
-        res.status(201).json(savedUser);
-    } catch(error){
-        res.status(500).json({error: error.message});
-    }
-});
-
-app.post("/login", async (req, res) => {
-    try{
-        const {email, password}= req.body;
-        const user = await UserModel.findOne({email});
-        if (user){
-            const passwordMatch= await bcrypt.compare(password, user.password);
-            if(passwordMatch){
-                req.session.user = {id: user._id, name: user.name, email: user.email};
-                res.json("Success");
-            } else{
-                res.status(500).json("Incorrect Password");
-            }
-        } else{
-            res.status(404).json("No Records found");
-        }
-    } catch (error){
-        res.status(500).json({error: error.message});
-    } 
-});
-
 const storage = multer.diskStorage({
     destination: (req, files, cb) => {
         cb(null, "uploads/");
@@ -99,6 +63,67 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage});
+
+//routes for signup
+app.post("/signup", upload.single('image'), async(req, res) =>{
+    try{
+        const {name, email, password}= req.body;
+        const existingUser= await UserModel.findOne({email});
+        if (existingUser){
+            return res.status(400).json({error:"Email already exists"});
+
+        }
+        const hashedPassword= await bcrypt.hash(password, 10);
+        const imagePath= req.file? req.file.path:null;
+
+        const newUser= new UserModel({
+                name,
+                email,
+                password:hashedPassword,
+                image:imagePath
+        });
+
+        const savedUser= await newUser.save();
+        res.status(201).json({
+            id:savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            registrationDate:savedUser.registrationDate,
+            image:savedUser.image,
+        });
+        
+    } catch (error){
+        res.status(500).json({error:error.message});
+    }
+});
+
+//routes for login
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await UserModel.findOne({ email });
+        
+        if (user) {
+            const passwordMatch = await bcrypt.compare(password, user.password);
+            if (passwordMatch) {
+                // Set session with user data, including image
+                req.session.user = { 
+                    id: user._id, 
+                    name: user.name, 
+                    email: user.email,
+                    image: user.image // Include image in session data
+                };
+                res.json({ message: "Success", user: req.session.user });
+            } else {
+                res.status(500).json("Incorrect password");
+            }
+        } else {
+            res.status(404).json("No records found");
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+  });
 
 app.post("/profiles", upload.single("photo"), async(req, res) => {
     const {petsname, breed, age, contactnumber} = req.body;
