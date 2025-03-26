@@ -21,8 +21,8 @@
     display: flex;
     align-items: center;
     gap: 25px;
-    margin-left: 350px;
-    padding-left: 400px;
+    margin-left: 300px;
+    padding-left: 350px;
     flex-grow: 1;
 }
 
