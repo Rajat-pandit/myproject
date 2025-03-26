@@ -84,6 +84,7 @@ export const Navbar = () => {
               )}
               </li>
             <li>About</li>
+            <li onClick={()=> navigate('/community')}>Community</li>
             <li className='dropdown' onClick={toggleProfileDropdown} ref={profileDropdownRef}>
               {user ? (
                 <div className="profile">
