@@ -1,0 +1,90 @@
+.post-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.post-card{
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.post-card:hover{
+    transform: translateY(-5px);
+}
+
+.post-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.post-card .post-content{
+    margin-top: 15px;
+}
+
+.post-card .post-header h6{
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.post-card .post-header p{
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.like-button-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.like-button-container .MuiIconButton-root{
+    padding: 5px;
+}
+
+.comment-section {
+    margin-top: 20px;
+}
+
+.comment-input{
+    margin-bottom: 10px;
+}
+
+.comment-submit-button{
+    margin-top: 10px;
+}
+
+.comments-list{
+    margin-top: 15px;
+}
+
+.comment-item{
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.circular-progress{
+    margin-top: 50px;
+}
+
+.no-posts-message{
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #888;
+    margin-top: 30px;
+}

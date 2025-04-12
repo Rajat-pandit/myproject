@@ -14,6 +14,7 @@ const RequestModel= require("./model/AdoptionRequest");
 const session= require("express-session");
 const Reminder = require('./model/Reminder');
 const EmergencyCard= require('./model/EmergencyCard');
+const Post = require('./model/Posts');
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
 const nodemailer= require('nodemailer');
@@ -948,7 +949,100 @@ app.post("/reset-password", async (req, res) => {
     }
   });
   
-  
+  //routes for posting the route in community
+ app.post('/create', upload.single('image'),async (req, res) =>{
+    try{
+        const{postContent, userName, userImage}= req.body;
+        const image =req.file ? req.file.path.replace(/\\/g, '/'):null;
+        if(!postContent || !userName || !userImage){
+            return res.status(400).json({error:'Missing required fields'});
+        }
+
+        const userId= req.session.user?.id;
+        if(!userId){
+            return res.status(401).json({error:'User not authenticated'});
+        }
+
+        const newPost= new Post({
+            postContent,
+            image,
+            user:userId,
+            userName,
+            userImage,
+        });
+
+        const savedPost= await newPost.save();
+        res.status(201).json(savedPost);
+    } catch (error){
+        console.error('Error:', error);
+        res.status(400).json({error:'Error creating post'});
+    }
+ });
+
+ //backend route for getting the posts
+ app.get('/posts', async(req,res) =>{
+    try{
+        const posts= await Post.find().populate('user', 'userName userImage');
+        res.status(200).json(posts);
+    } catch (error){
+        console.error('Error fetching posts:', error);
+        res.status(500).json({error:'Error fetching posts'});
+    }
+ });
+
+ //like post route
+ app.post('/like/:postId', async (req,res)=>{
+    const {postId}=req.params;
+    const userId= req.session.user?.id;
+
+    if(!userId){
+        return res.status(401).json({message:'User not authenticated'});
+
+    }
+    try{
+        const post= await Post.findById(postId);
+        if(!post) return res.status(404).json({message:'Post not found'});
+        const isLiked=post.likes.includes(userId);
+        if(!isLiked){
+            post.likes.push(userId);
+            post.likesCount +=1;
+        } else{
+            post.likes= post.likes.filter(like => like.toString() !== userId.toString());
+            post.likesCount -=1;
+        }
+
+        await post.save();
+        res.status(200).json(post);
+    } catch (error){
+        res.status(500).json({message:'Server error'});
+    }
+ });
+
+ //route for comments in posts
+ app.post('/comment/:postId', async(req,res)=>{
+    const {content, userName,userImage}= req.body;
+    const userId= req.session.userId;
+
+    try{
+        const post= await Post.findById(req.params.postId);
+        if(!post) return res.status(404).json({message:"Post not found"});
+        const newComment = {
+            user:userId,
+            content,
+            userName,
+            userImage,
+            createdAt:new Date(),
+        };
+
+        post.comments.push(newComment);
+        await post.save();
+        res.status(200).json(post);
+    } catch (error){
+        console.error(error);
+        res.status(500).json({message:"Something went wrong"});
+    }
+ });
+ 
   
   
   
