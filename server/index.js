@@ -850,32 +850,35 @@ app.put("/change-password", async (req, res)=>{
 });
 
 //route for updating the user details
-app.put('/user/update', (req, res) => {
-    if(!req.session.user){
-        return res.status(401).json("Not authenticated");
+app.put('/user/update', upload.single('image'), async (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).json("Not authenticated");
     }
-    const {name, email}= req.body;
-
-    if(!name && !email){
-        return res.status(400).json("No data to update");
+    const { name } = req.body;
+    const imagePath = req.file ? req.file.path : null; 
+  
+    if (!name && !imagePath) {
+      return res.status(400).json("No data to update");
     }
-
-    UserModel.findByIdAndUpdate(req.session.user.id, {name, email}, {new:true})
-        .then(updatedUser => {
-            if(!updatedUser){
-                return res.status(404).json("User not found");
-            }
-
-            req.session.user.name= updatedUser.name;
-            req.session.user.email= updatedUser.email;
-            res.json({user: updatedUser});
-        })
-        .catch(err => {
-            console.error("Error updating user details:", err);
-            res.status(500).json("Error updating user details");
-        });
-    
-});
+    try {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        req.session.user.id,
+        { name, image: imagePath },
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json("User not found");
+      }
+      req.session.user.name = updatedUser.name;
+      req.session.user.image = updatedUser.image;
+  
+      res.json({ user: updatedUser });
+    } catch (err) {
+      console.error("Error updating user details:", err);
+      res.status(500).json("Error updating user details");
+    }
+  });
 
 //route for forgog password and sending email for link
 
@@ -1072,4 +1075,16 @@ app.post("/reset-password", async (req, res) => {
         res.status(500).json({ message: 'Server error while deleting post' });
     }
 });
+
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log('Error destroying session:', err);
+        return res.status(500).send({ success: false, message: 'Logout failed' });
+      }
   
+      res.clearCookie('connect.sid'); // Clear session cookie
+      return res.send({ success: true });
+    });
+  });
