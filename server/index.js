@@ -1043,6 +1043,33 @@ app.post("/reset-password", async (req, res) => {
     }
  });
  
+ //route for fetching my posts
+ app.get('/myposts/:userName', async (req, res) => {
+    const { userName } = req.params;
+    try {
+        const posts = await Post.find({ userName }); 
+        res.json(posts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+  });
   
-  
+  //route for deleting the posts
+  app.delete('/post/:id', async (req, res) => {
+    try {
+        const postId = req.params.id;
+
+        const deletedPost = await Post.findByIdAndDelete(postId);
+
+        if (!deletedPost) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.status(200).json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        res.status(500).json({ message: 'Server error while deleting post' });
+    }
+});
   

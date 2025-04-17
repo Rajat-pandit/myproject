@@ -1,0 +1,113 @@
+.menu-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  
+  .post-footer {
+    margin-top: 10px;
+    text-align: right;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .post-card {
+    position: relative;
+    padding: 15px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .post-header h6 {
+    margin: 0;
+    font-size: 16px; 
+    font-weight: 300;
+  }
+  
+  .post-content {
+    margin: 15px 0;
+  }
+  
+  .post-content h3 {
+    font-size: 18px; 
+    font-weight: 300;
+  }
+  
+  .post-image {
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .like-button-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px; 
+  }
+  
+  .comment-section {
+    margin-top: 10px;
+  }
+  
+  .comment-section h4 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .comment-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .comment-item img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .no-posts-message {
+    text-align: center;
+    color: #555;
+    font-size: 15px;
+  }
+  
+  .delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 15px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+  }
+  
