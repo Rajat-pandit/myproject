@@ -60,7 +60,7 @@ const Adoption= ({user}) => {
     return(
         <div className="adoption-page">
             <Navbar user={user}/>
-            <div className="banner-section">
+            <div className="adoptionbanner-section">
                 <div className="banner-text">
                 <h1>Find Your New Best Friend</h1>
                 <p>Browse our available dogs for adoption and give a pet a loving home.</p>

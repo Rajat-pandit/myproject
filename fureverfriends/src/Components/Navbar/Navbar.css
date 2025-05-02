@@ -1,50 +1,49 @@
-.navbar{
+   .navbar {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color:#76d3cd;
+    background-color: #76d3cd;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
-}
-
-.logo{
-    width: 40px;
-    height: auto;
+  }
+  
+  .logo {
+    height: 40px;
+    width: auto;
     cursor: pointer;
-}
-
-.navbar-menu{
+  }
+  
+  .navbar-menu {
     list-style: none;
     display: flex;
     align-items: center;
     gap: 25px;
-    margin-left: 280px;
-    padding-left: 300px;
+    margin-left: 250px;
+    padding-left: 250px;
     flex-grow: 1;
-}
-
-.navbar-menu li{
+  }
+  
+  .navbar-menu li {
     position: relative;
     font-size: 18px;
     font-weight: 500;
     cursor: pointer;
     color: white;
     transition: color 0.3s ease;
-}
-
-.navbar-menu li:hover{
+  }
+  
+  .navbar-menu li:hover {
     color: #f5f5f5;
-   
-}
-
-.dropdown{
+  }
+  
+  .dropdown {
     position: relative;
-}
-
-.dropdown-menu{
+  }
+  
+  .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
@@ -55,44 +54,44 @@
     flex-direction: column;
     padding: 10px;
     min-width: 150px;
-}
-
-
-.dropdown-menu li{
-    padding: 10px ;
-    color: #333;
+    z-index: 1000;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px;
     font-size: 16px;
     font-weight: 400;
+    color: #333;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.dropdown-menu li:hover{
+  }
+  
+  .dropdown-menu li:hover {
     background-color: #c0bbbb;
-}
-
-
-.arrow-down, .arrow-up{
-    font-size: 14px;
+  }
+  
+  .arrow-up,
+  .arrow-down {
     margin-left: 5px;
-}
-
-.profile{
+    font-size: 14px;
+  }
+  
+  .profile {
     display: flex;
     align-items: center;
     gap: 10px;
     cursor: pointer;
-}
-
-.profile-image{
+  }
+  
+  .profile-image {
     width: 35px;
     height: 35px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
-}
-
-button{
+  }
+  
+  button {
     background-color: #ffffff;
     color: #76d3cd;
     padding: 8px 16px;
@@ -101,25 +100,96 @@ button{
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-button:hover{
+  }
+  
+  button:hover {
     background-color: #6fbfb9;
     color: white;
-}
-
-@media (max-width: 768px) {
-    .navbar-menu {
-      display: none;
-    }
+  }
   
-    .navbar {
-      flex-direction: column;
-    }
+  .notification-bell {
+    position: relative;
+  }
   
-    .logo {
-      position: static;
-      margin-bottom: 10px;
-    }
+  .bell-icon {
+    font-size: 22px;
+  }
+  
+  .notification-count {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+  }
+  
+  .notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    width: 300px;
+    max-height: 350px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 10px;
+  }
+  
+  .notification-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 5px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: black;
+  }
+  
+  .blue-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #007bff;
+    border-radius: 50%;
+    margin-left: auto;
+  }
+  
+  .notification-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .notification-actions .clear-btn,
+  .notification-actions .mark-btn {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .notification-actions .clear-btn:hover,
+  .notification-actions .mark-btn:hover {
+    text-decoration: underline;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
   }
   

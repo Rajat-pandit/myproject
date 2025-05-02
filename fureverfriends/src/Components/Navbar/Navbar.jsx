@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Navbar.css';
 
@@ -7,22 +7,23 @@ export const Navbar = () => {
   const [user, setUser] = useState(null);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
   const servicesDropdownRef = useRef(null);
   const profileDropdownRef = useRef(null);
+  const notificationsDropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/user', {
-          withCredentials: true, 
+          withCredentials: true,
         });
-
-        if (response.data.user) {
-          setUser(response.data.user);
-        } else {
-          setUser(null);
-        }
+        setUser(response.data.user || null);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setUser(null);
@@ -32,30 +33,43 @@ export const Navbar = () => {
     fetchUserData();
   }, []);
 
+  // Fetch notifications whenever route changes
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get('http://localhost:3001/notifications', {
+          withCredentials: true,
+        });
+        setNotifications(res.data);
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
+      }
+    };
 
-  const toggleServicesDropdown = () => {
-    setServicesDropdownOpen(!servicesDropdownOpen);
-  };
- 
-  const toggleProfileDropdown = () => {
-    setProfileDropdownOpen(!profileDropdownOpen);
-  };
+    fetchNotifications();
+  }, [location.pathname]);
 
+  // Toggle dropdowns
+  const toggleServicesDropdown = () => setServicesDropdownOpen(!servicesDropdownOpen);
+  const toggleProfileDropdown = () => setProfileDropdownOpen(!profileDropdownOpen);
+  const toggleNotificationsDropdown = () => setNotificationsOpen(!notificationsOpen);
+
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        (servicesDropdownRef.current && !servicesDropdownRef.current.contains(event.target)) &&
-        (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target))
+        (!servicesDropdownRef.current || !servicesDropdownRef.current.contains(event.target)) &&
+        (!profileDropdownRef.current || !profileDropdownRef.current.contains(event.target)) &&
+        (!notificationsDropdownRef.current || !notificationsDropdownRef.current.contains(event.target))
       ) {
         setServicesDropdownOpen(false);
         setProfileDropdownOpen(false);
+        setNotificationsOpen(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleDropdownItemClick = (e, route) => {
@@ -63,34 +77,58 @@ export const Navbar = () => {
     navigate(route);
     setServicesDropdownOpen(false);
     setProfileDropdownOpen(false);
+    setNotificationsOpen(false);
   };
 
   const handleLogout = async (e) => {
     e.stopPropagation();
     try {
-      // Send logout request to backend to destroy session
       await axios.get('http://localhost:3001/logout', { withCredentials: true });
-
-      // Remove login-related data from local storage
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userImage');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('userEmail');
-
-      // Clear user state
+      localStorage.clear();
       setUser(null);
-      navigate('/'); 
-      setProfileDropdownOpen(false);
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
+
+  //  Mark all notifications as read and re-fetch updated notifications
+  const markAllAsRead = async () => {
+    try {
+      await axios.post('http://localhost:3001/notifications/markAllAsRead', {}, { withCredentials: true });
+
+      // Re-fetch updated notifications
+      const res = await axios.get('http://localhost:3001/notifications', {
+        withCredentials: true,
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+      });
+
+      setNotifications(res.data);
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    try {
+      await axios.delete('http://localhost:3001/notifications/clear', { withCredentials: true });
+      setNotifications([]);
+      console.log('All notifications cleared');
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
     <div className='navbar'>
       <img src='/logo.png' alt="logo" className='logo' />
       <ul className='navbar-menu'>
         <li onClick={() => navigate("/home")}>Home</li>
+
         <li className='dropdown' onClick={toggleServicesDropdown} ref={servicesDropdownRef}>
           Services <span className={servicesDropdownOpen ? 'arrow-up' : 'arrow-down'}>▼</span>
           {servicesDropdownOpen && (
@@ -101,29 +139,64 @@ export const Navbar = () => {
             </ul>
           )}
         </li>
-        <li>About</li>
+
         <li onClick={() => navigate('/community')}>Community</li>
+
+        <li className='notification-bell' onClick={toggleNotificationsDropdown} ref={notificationsDropdownRef}>
+          <span className="bell-icon">🔔</span>
+          {unreadCount > 0 && (
+            <span className="notification-count">{unreadCount}</span>
+          )}
+          {notificationsOpen && (
+            <div className="notification-dropdown">
+              {notifications.length > 0 && (
+                <div className="notification-actions">
+                  <button className="clear-btn" onClick={clearAllNotifications}>Clear All</button>
+                  <button className="mark-btn" onClick={markAllAsRead}>Mark all as read</button>
+                </div>
+              )}
+
+              {notifications.length === 0 ? (
+                <div className="notification-item">No new notifications</div>
+              ) : (
+                notifications.map((note, index) => (
+                  <div
+                    key={index}
+                    className="notification-item"
+                    style={{
+                      backgroundColor: note.isRead ? 'white' : '#e6f7ff',
+                      fontWeight: note.isRead ? 'normal' : 'bold',
+                    }}
+                  >
+                    <img
+                      src={`http://localhost:3001/${note.fromUserImage}`}
+                      alt={note.fromUserName}
+                      className="notification-avatar"
+                    />
+                    <span>
+                      <strong>{note.fromUserName}</strong> {note.message}
+                    </span>
+                    {!note.isRead && <span className="blue-dot" />}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </li>
+
         <li className='dropdown' onClick={toggleProfileDropdown} ref={profileDropdownRef}>
           {user ? (
             <div className='profile'>
-              {user.image ? (
-                <img
-                  src={`http://localhost:3001/${user.image.replace(/\\/g, '/')}`}
-                  alt={user.name}
-                  className='profile-image'
-                />
-              ) : (
-                <img
-                  src='/default-avatar.jpg'
-                  alt="Default Avatar"
-                  className='profile-image'
-                />
-              )}
+              <img
+                src={`http://localhost:3001/${user.image?.replace(/\\/g, '/') || 'default-avatar.jpg'}`}
+                alt={user.name}
+                className='profile-image'
+              />
               <span>{user.name}</span>
               <span className={profileDropdownOpen ? 'arrow-up' : 'arrow-down'}>▼</span>
             </div>
           ) : (
-            <button onClick={() => navigate('/login')}>Login</button>  
+            <button onClick={() => navigate('/login')}>Login</button>
           )}
           {profileDropdownOpen && user && (
             <ul className='dropdown-menu'>

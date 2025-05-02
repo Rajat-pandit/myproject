@@ -68,7 +68,7 @@ export const PetManagement = ()=>{
                 </div>
             )}
 
-            <h2>Animals Available for Adoption</h2>
+            <h2>Animals Listed for Adoption</h2>
             <div className="animal-cards-container">
                 {pets.map((pet) => (
                     <div className='animal-card' key={pet._id}>
