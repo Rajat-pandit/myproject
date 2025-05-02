@@ -39,7 +39,6 @@ const Dashboard= () =>{
                     <li><a href="/admin/pets">Pet Management</a></li>
                     <li><a href="/admin/users">User Management</a></li>
                     <li><a href="/admin/adoptions">Adoption Requests</a></li>
-                    <li><a href="/admin/settings">Settings</a></li>
                 </ul>
                 </div>
                 </div>

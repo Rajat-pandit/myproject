@@ -14,6 +14,8 @@ const RequestModel= require("./model/AdoptionRequest");
 const session= require("express-session");
 const Reminder = require('./model/Reminder');
 const EmergencyCard= require('./model/EmergencyCard');
+const VetAppointment = require('./model/VetAppointment');
+const Notification = require('./model/Notification'); // Import the Notification model
 const Post = require('./model/Posts');
 const MongoStore= require("connect-mongo");
 const {ObjectId}= require('mongodb');
@@ -993,59 +995,181 @@ app.post("/reset-password", async (req, res) => {
     }
  });
 
- //like post route
- app.post('/like/:postId', async (req,res)=>{
-    const {postId}=req.params;
-    const userId= req.session.user?.id;
-
-    if(!userId){
-        return res.status(401).json({message:'User not authenticated'});
-
+ //like post route along with notification
+app.post('/like/:id', async (req, res) => {
+    const postId = req.params.id;
+  
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: 'Invalid post ID' });
+    } 
+    try {
+      // Fetch the post and populate the user reference
+      const post = await Post.findById(postId).populate('user');
+      
+      // Check if the post is found
+      if (!post) {
+        return res.status(404).json({ error: 'Post not found' });
+      }
+      console.log("Post user:", post.user);
+      if (!post.user) {
+        return res.status(500).json({ error: 'Post user data not found' });
+      } 
+      const userId = req.session.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }  
+      // Ensure post.likes is an array and clean it up
+      post.likes = post.likes.filter(like => like); 
+      // Check if the user has already liked the post
+      const isAlreadyLiked = post.likes.some(like => like.toString() === userId.toString());
+  
+      if (!isAlreadyLiked) {
+        // Add user to likes
+        post.likes.push(userId);
+        post.likesCount += 1;
+      } else {
+        // Remove user from likes
+        post.likes = post.likes.filter(like => like.toString() !== userId.toString());
+        post.likesCount -= 1;
+      }
+  
+      // Save the updated post
+      await post.save();
+  
+      // Send notification to the user who posted the post
+      if (post.user._id.toString() !== userId.toString()) { // Prevent sending notification to the user who liked their own post
+        const notificationMessage = `${isAlreadyLiked ? 'unliked' : 'liked'} your post.`; 
+  
+        
+        const notification = new Notification({
+          toUser: post.user._id,
+          fromUserName: req.session.user.name,
+          fromUserImage: req.session.user.image,  
+          postId: post._id,
+          message: notificationMessage,
+          type: 'like', 
+        });
+  
+        await notification.save();
+      }
+      // Return the updated post as response
+      const updatedPost = await Post.findById(postId).populate('user');
+      res.json(updatedPost);
+  
+    } catch (error) {
+      console.error('Error liking post:', error);
+      res.status(500).json({ error: 'Something went wrong' });
     }
-    try{
-        const post= await Post.findById(postId);
-        if(!post) return res.status(404).json({message:'Post not found'});
-        const isLiked=post.likes.includes(userId);
-        if(!isLiked){
-            post.likes.push(userId);
-            post.likesCount +=1;
-        } else{
-            post.likes= post.likes.filter(like => like.toString() !== userId.toString());
-            post.likesCount -=1;
-        }
+  });
 
-        await post.save();
-        res.status(200).json(post);
-    } catch (error){
-        res.status(500).json({message:'Server error'});
+//route for comments in posts along with notification
+app.post('/comment/:postId', async (req, res) => {
+    const { content, userName, userImage } = req.body;
+    const userId = req.session.user?.id; 
+  
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' }); 
     }
- });
-
- //route for comments in posts
- app.post('/comment/:postId', async(req,res)=>{
-    const {content, userName,userImage}= req.body;
-    const userId= req.session.userId;
-
-    try{
-        const post= await Post.findById(req.params.postId);
-        if(!post) return res.status(404).json({message:"Post not found"});
-        const newComment = {
-            user:userId,
-            content,
-            userName,
-            userImage,
-            createdAt:new Date(),
-        };
-
-        post.comments.push(newComment);
-        await post.save();
-        res.status(200).json(post);
-    } catch (error){
-        console.error(error);
-        res.status(500).json({message:"Something went wrong"});
+  
+    try {
+      const post = await Post.findById(req.params.postId);
+      if (!post) return res.status(404).json({ message: 'Post not found' });
+  
+      const newComment = {
+        user: userId,
+        content,
+        userName,
+        userImage,
+        createdAt: new Date(),
+      };
+  
+      // Add comment to the post
+      post.comments.push(newComment);
+      await post.save();
+  
+      // Send notification to the user who posted the post
+      if (post.user._id.toString() !== userId.toString()) { 
+        const notificationMessage = `commented on your post.`;
+  
+        const notification = new Notification({
+          toUser: post.user._id,
+          fromUserName: userName,
+          fromUserImage: userImage,  
+          postId: post._id,
+          message: notificationMessage,
+          type: 'comment', 
+        });
+  
+        await notification.save(); // Save notification to the database
+      }
+  
+      res.status(200).json(post); 
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong' });
     }
- });
- 
+  });
+
+
+// rooute for getting notification
+app.get('/notifications', async (req, res) => {
+    const userId = req.session.user?.id;
+  
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+  
+    try {
+      const notifications = await Notification.find({ toUser: userId }).sort({ createdAt: -1 });
+      res.json(notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  });
+
+  
+//route for mark all as read route and update if read
+app.post('/notifications/markAllAsRead', async (req, res) => {
+    try {
+      const userId = req.session.user?.id;
+      const objectId = new mongoose.Types.ObjectId(userId);
+  
+      await Notification.updateMany(
+        { toUser: objectId, isRead: false },
+        { $set: { isRead: true } }
+      );
+  
+      res.json({ success: true });
+    } catch (err) {
+      console.error('Error marking notifications as read:', err);
+      res.status(500).json({ error: 'Failed to mark all notifications as read' });
+    }
+  });
+
+  //route for deleting notification after clicking Clear all
+  app.delete('/notifications/clear', async (req, res) => {
+    try {
+      const userId = req.session.user?.id;
+      console.log('User ID from session:', userId);
+  
+      if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+  
+      const objectId = new mongoose.Types.ObjectId(userId);
+  
+      const result = await Notification.deleteMany({ toUser: objectId });
+  
+      console.log('Delete Result:', result);
+  
+      res.status(200).json({ message: `${result.deletedCount} notifications cleared` });
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+
  //route for fetching my posts
  app.get('/myposts/:userName', async (req, res) => {
     const { userName } = req.params;
@@ -1076,7 +1200,7 @@ app.post("/reset-password", async (req, res) => {
     }
 });
 
-
+//routes for logout
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
       if (err) {
@@ -1087,4 +1211,44 @@ app.get('/logout', (req, res) => {
       res.clearCookie('connect.sid'); // Clear session cookie
       return res.send({ success: true });
     });
+  });
+
+  //roues for posting the vet appointment
+  app.post('/appointments', async (req, res) => {
+    const { ownerName, petName, age, gender, contactNumber, location, date, time } = req.body;
+  
+    try {
+      const newAppointment = new VetAppointment({
+        ownerName,
+        petName,
+        age,
+        gender,
+        contactNumber,
+        location,
+        date,
+        time,
+      });
+  
+      await newAppointment.save();
+      res.status(201).json({ message: 'Appointment created successfully', newAppointment });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to create appointment', message: error.message });
+    }
+  });
+
+  //route for getting the appointment
+  app.get('/appointments/:userName', async (req, res) => {
+    const { userName } = req.params;
+  
+    if (!userName) {
+      return res.status(400).json({ message: 'User name is required' });
+    }
+  
+    try {
+      const appointments = await VetAppointment.find({ ownerName: userName }); 
+      
+      res.status(200).json({ appointments });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch appointments', error: error.message });
+    }
   });

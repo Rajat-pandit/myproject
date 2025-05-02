@@ -14,6 +14,8 @@ import ForgotPassword from "./Components/LoginSignup/ForgotPassword";
 import ResetPassword from "./Components/LoginSignup/ResetPassword";
 import Community from "./Components/Community/Community";
 import  CommunityPost  from "./Components/Community/CommunityPost";
+import VetService from "./Components/Services/VetService";
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -55,6 +57,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/community" element={<Community />} />
         <Route path="/communitypost" element={isLoggedIn? <CommunityPost user={user}/> :<Navigate to="/login"/>} />
+        <Route path="/vet" element={<VetService />} />
 
 
       </Routes>
