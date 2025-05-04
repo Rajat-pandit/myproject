@@ -57,7 +57,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/community" element={<Community />} />
         <Route path="/communitypost" element={isLoggedIn? <CommunityPost user={user}/> :<Navigate to="/login"/>} />
-        <Route path="/vet" element={<VetService />} />
+        <Route path="/vet" element={isLoggedIn? <VetService user={user} /> : <Navigate to="/login"/>} />
 
 
       </Routes>
