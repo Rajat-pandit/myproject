@@ -1186,13 +1186,10 @@ app.post('/notifications/markAllAsRead', async (req, res) => {
   app.delete('/post/:id', async (req, res) => {
     try {
         const postId = req.params.id;
-
         const deletedPost = await Post.findByIdAndDelete(postId);
-
         if (!deletedPost) {
             return res.status(404).json({ message: 'Post not found' });
         }
-
         res.status(200).json({ message: 'Post deleted successfully' });
     } catch (error) {
         console.error('Error deleting post:', error);
@@ -1207,7 +1204,6 @@ app.get('/logout', (req, res) => {
         console.log('Error destroying session:', err);
         return res.status(500).send({ success: false, message: 'Logout failed' });
       }
-  
       res.clearCookie('connect.sid'); // Clear session cookie
       return res.send({ success: true });
     });
@@ -1216,11 +1212,10 @@ app.get('/logout', (req, res) => {
   //roues for posting the vet appointment
   app.post('/appointments', async (req, res) => {
     const { ownerName, petName, age, gender, contactNumber, location, date, time } = req.body;
-  
     try {
       const newAppointment = new VetAppointment({
         ownerName,
-        petName,
+        petName, 
         age,
         gender,
         contactNumber,
@@ -1228,7 +1223,6 @@ app.get('/logout', (req, res) => {
         date,
         time,
       });
-  
       await newAppointment.save();
       res.status(201).json({ message: 'Appointment created successfully', newAppointment });
     } catch (error) {
@@ -1237,18 +1231,29 @@ app.get('/logout', (req, res) => {
   });
 
   //route for getting the appointment
-  app.get('/appointments/:userName', async (req, res) => {
-    const { userName } = req.params;
-  
-    if (!userName) {
-      return res.status(400).json({ message: 'User name is required' });
-    }
-  
+  app.get('/appointments/:petName', async (req, res) => {
+    const { petName } = req.params;
     try {
-      const appointments = await VetAppointment.find({ ownerName: userName }); 
-      
-      res.status(200).json({ appointments });
+      const appointments = await VetAppointment.find({ petName });
+      res.json({ appointments });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch appointments', error: error.message });
+      console.error('Error fetching appointments:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+  //routes for deleting the appointmnets
+  app.delete('/appointments/:appointmentId', async (req, res) => {
+    const { appointmentId } = req.params;
+    try {
+      const appointment = await VetAppointment.findByIdAndDelete(appointmentId); 
+      if (!appointment) {
+        return res.status(404).json({ message: 'Appointment not found' });
+      } 
+      res.status(200).json({ message: 'Appointment deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+      res.status(500).json({ message: 'Failed to delete appointment', error: error.message });
+    }
+  });
+  
